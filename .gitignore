@@ -6,3 +6,5 @@
 .Rdata
 .httr-oauth
 .DS_Store
+*.db
+*thread-figures/
