@@ -84,7 +84,7 @@ query <- "SELECT Date, HomeTeam, AwayTeam, FTHG, FTAG
 
 football_data1 <- DBI::dbGetQuery(con, statement = query)
 
-head(football_data1)
+print(head(football_data1))
 
 # Say you only wanted games with more than 2.5 goals scored
 
@@ -94,7 +94,7 @@ query <- "SELECT Date, HomeTeam, AwayTeam, FTHG, FTAG
 
 football_data2 <- DBI::dbGetQuery(con, statement = query)
 
-head(football_data2)
+print(head(football_data2))
 ```
 
 This is really powerful. This data could be far too big for R to handle all at
