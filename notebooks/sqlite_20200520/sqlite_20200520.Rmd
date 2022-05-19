@@ -113,8 +113,6 @@ football_data3 <- con |>
   dplyr::tbl("england_premier_league") |>
   dplyr::select(Date, HomeTeam, AwayTeam, FTHG, FTAG) |>
   dplyr::filter(FTHG + FTAG > 2.5)
-
-head(football_data3)
 ```
 
 footballdata3 isn't quite the same as a normal tibble/data.frame. That's because
