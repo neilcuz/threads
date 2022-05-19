@@ -1,25 +1,28 @@
 ---
 title: "How to use R with SQLlite"
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
+editor_options:
+  markdown:
+    wrap: 80
 ---
 
-This is a walkthrough of how you can use SQLite with R.
+This is a walkthrough of how you can use SQLite with R from my twitter [\@neilgcurrie](https://twitter.com/neilgcurrie).
 
-Often in R we read in files of mixed formats. This gets messy fast and when the 
-data is too big R will lag or fall over. Enter the database. SQLite is software 
-used to interact with databases and is one of the most popular engines around. 
+Often in R we read in files of mixed formats. This gets messy fast and when the
+data is too big R will lag or fall over. Enter the database. SQLite is software
+used to interact with databases and is one of the most popular engines around.
 We can work with SQLite directly from R.
 
-Let’s create a database. We need the DBI and RSQLite packages to interact with 
-our database. The dbConnect function creates a connection to a database when you 
-supply a file name. When no database exists it creates a blank one. This one is 
+Let's create a database. We need the DBI and RSQLite packages to interact with
+our database. The dbConnect function creates a connection to a database when you
+supply a file name. When no database exists it creates a blank one. This one is
 created in my working directory.
 
 ```{r}
 library(DBI)     
 library(RSQLite)
-library(here, quietly = TRUE)
-library(glue)
 
 filename <- glue::glue("{here::here()}/football-data.db")
 
@@ -28,9 +31,9 @@ con <- DBI::dbConnect(RSQLite::SQLite(), filename)
 DBI::dbListTables(con)
 ```
 
-Now we add some data to our database. In this example I have taken football 
-(soccer) results data from football-data.co.uk for the Premier League and La 
-Liga. We use the dbWriteTable function to create new tables with specified names 
+Now we add some data to our database. In this example I have taken football
+(soccer) results data from football-data.co.uk for the Premier League and La
+Liga. We use the dbWriteTable function to create new tables with specified names
 and write the data all in one step.
 
 ```{r}
@@ -44,6 +47,9 @@ epl_2122 <- readr::read_csv("https://www.football-data.co.uk/mmz4281/2122/E0.csv
 DBI::dbWriteTable(con, name = "england_premier_league", value = epl_2122)
 
 dbListTables(con) 
+
+# You can look at a tables fields
+
 DBI::dbListFields(con, name = "england_premier_league")
 
 # Create another table
@@ -56,9 +62,9 @@ dbWriteTable(con, name = "spain_la_liga", value = ll_2122)
 dbListTables(con)
 ```
 
-Imagine we want to add an extra season of Premier League data to our table 
-england_premier_league. Again, we use the dbWriteTable function but now we use 
-the option append = TRUE. 
+Imagine we want to add an extra season of Premier League data to our table
+england_premier_league. Again, we use the dbWriteTable function but now we use
+the option append = TRUE.
 
 ```{r}
 epl_2021 <- readr::read_csv("https://www.football-data.co.uk/mmz4281/2021/E0.csv",
@@ -68,8 +74,8 @@ dbWriteTable(con, name = "england_premier_league", value = epl_2021,
              append = TRUE)
 ```
 
-Now we have some data in there let's query the database. We can send a SQL query 
-from R to the database and pull the queried data back into R. We type SQL code 
+Now we have some data in there let's query the database. We can send a SQL query
+from R to the database and pull the queried data back into R. We type SQL code
 as a normal string and pass it to the dbGetQuery function.
 
 ```{r}
@@ -91,17 +97,17 @@ football_data2 <- DBI::dbGetQuery(con, statement = query)
 head(football_data2)
 ```
 
-This is really powerful. This data could be far too big for R to handle all at 
-once - no problem with this approach. You would only need the memory to handle 
+This is really powerful. This data could be far too big for R to handle all at
+once - no problem with this approach. You would only need the memory to handle
 the queried, and hopefully smaller, dataset.
 
-What if you don't know SQL? You can use the dbplyr package with all the great 
-syntax you are familiar with from dplyr! R will turn your R code into SQL code 
+What if you don't know SQL? You can use the dbplyr package with all the great
+syntax you are familiar with from dplyr! R will turn your R code into SQL code
 and send it to the database without needing to know any SQL.
 
 ```{r}
-library(dplyr)
-library(dbplyr)
+library(dplyr, quietly = TRUE, warn.conflicts = FALSE)
+library(dbplyr, quietly = TRUE, warn.conflicts = FALSE)
 
 football_data3 <- con |>
   dplyr::tbl("england_premier_league") |>
@@ -111,20 +117,22 @@ football_data3 <- con |>
 head(football_data3)
 ```
 
-footballdata3 isn't quite the same as a normal tibble/data.frame. That's because 
-R hasn't pulled the data in yet. This keeps things fast. To pull it in we use 
+footballdata3 isn't quite the same as a normal tibble/data.frame. That's because
+R hasn't pulled the data in yet. This keeps things fast. To pull it in we use
 the collect function.
 
 ```{r}
-football_data3 <- collect(football_data3)
+football_data3 <- dplyr::collect(football_data3)
 print(football_data3)
 
-identical(football_data2, football_data3) # exactly the same
+football_data2 |> 
+  dplyr::as_tibble() |> 
+  identical(football_data3) # exactly the same
 
 # remember to close your connection to the database
 
-close.connection(con) 
+dbDisconnect(con) 
 ```
 
-
-
+Thanks for reading, if you liked this then follow me on twitter for mainly R and 
+data science stuff (though I make no promises) [\@neilgcurrie](https://twitter.com/neilgcurrie).
