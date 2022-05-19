@@ -1,7 +1,7 @@
 ---
 title: "How to use R with SQLlite"
 output:
-  html_document:
+  github_document:
     df_print: paged
 editor_options:
   markdown:
