@@ -8,3 +8,5 @@
 .DS_Store
 *.db
 *thread-figures/
+*.rds
+*.csv
