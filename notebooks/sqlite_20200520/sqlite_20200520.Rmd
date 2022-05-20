@@ -8,12 +8,13 @@ editor_options:
     wrap: 80
 ---
 
-This is a walkthrough of how you can use SQLite with R from my twitter [\@neilgcurrie](https://twitter.com/neilgcurrie).
+This is a walkthrough of how you can use SQLite with R from my twitter
+[\@neilgcurrie](https://twitter.com/neilgcurrie).
 
-Often in R we read in files of mixed formats. This gets messy fast and when the
-data is too big R will lag or fall over. Enter the database. SQLite is software
-used to interact with databases and is one of the most popular engines around.
-We can work with SQLite directly from R.
+In R we use all sorts of data from different sources. This gets messy fast and
+when the data is too big R will slow down or fall over. Enter the database.
+SQLite is software used to interact with databases and is incredibly popular. We
+can work with it directly from R.
 
 Let's create a database. We need the DBI and RSQLite packages to interact with
 our database. The dbConnect function creates a connection to a database when you
@@ -134,5 +135,6 @@ football_data2 |>
 dbDisconnect(con) 
 ```
 
-Thanks for reading, if you liked this then follow me on twitter for mainly R and 
-data science stuff (though I make no promises) [\@neilgcurrie](https://twitter.com/neilgcurrie).
+Thanks for reading, if you liked this then follow me on twitter for mainly R and
+data science stuff (though I make no promises)
+[\@neilgcurrie](https://twitter.com/neilgcurrie).
