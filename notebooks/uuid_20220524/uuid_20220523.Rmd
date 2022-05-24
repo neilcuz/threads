@@ -55,9 +55,13 @@ The most common forms of UUIDs use a combination of your machine's MAC address,
 random characters, and a timestamp. The clever part is that you don't need to 
 know prior UUIDs to be confident a new one is unique. Why is that?
 
-It comes down to probability theory. Wikipedia has a good example. To have a 50% probability of at least 1 collision you would need to have 2.71 quintillion 
-UUIDs. This number is so big you would need to generate a billion UUIDs every 
-second for 85 years!
+It comes down to probability theory. Wikipedia has a good example 
+
+https://en.wikipedia.org/wiki/Universally_unique_identifier
+
+To have a 50% chance of at least 1 collision you would need to have 2.71 
+quintillion UUIDs. This number is so big you would need to create a billion 
+UUIDs each second for 85 years!
 
 So how do you use them in R? Luckily there is a great package called uuid that 
 makes it easy.
