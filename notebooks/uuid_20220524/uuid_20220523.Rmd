@@ -82,9 +82,9 @@ customers4 <- mutate(customers, id = UUIDgenerate(use.time = TRUE, n = n()))
 print(customers4)
 ```
 
-One thing to be aware of is memory. If storage space is a major issue for you 
-then another approach might be more efficient because each UUID takes up 128 
-bits. In most cases though this is not an issue.
+One thing to be aware of is memory. Each UUID takes up 128 bits. If storage 
+space is a major issue then another approach might be more efficient. In most 
+cases though this is not an issue.
 
 Thanks for reading, if you liked this then follow me on twitter for mainly R and 
 data science stuff (though I make no promises)
