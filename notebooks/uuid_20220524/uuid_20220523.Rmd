@@ -1,0 +1,87 @@
+---
+title: "UUIDs in R"
+output:
+  github_document:
+    df_print: paged
+editor_options:
+  markdown:
+    wrap: 80
+---
+
+This is a walkthrough of how you can use UUIDs in R from my twitter
+[\@neilgcurrie](https://twitter.com/neilgcurrie).
+
+A universally unique identifier is a string of numbers and letters. They are 
+extremely useful in data and databases, and look like this: 'a1bf3f2c-fd6a-4ec5-8afd-299214c63739'. Firstly, let's look at examples of 
+adding an ID to data.
+
+It's often a good idea to have an ID field that you can use to distinguish rows
+or cases in your data. This makes data wrangling and linking much easier. There
+are different ways to do this.
+
+One approach is to combine columns. Imagine you have a dataset of customer
+details. You create an id field by combining name and date of birth variables.
+But two customers could have the same name and date of birth. What if they
+change their name? This is not ideal.
+
+```{r}
+library(dplyr, quietly = TRUE, warn.conflicts = FALSE)
+
+customers <- tibble::tribble(
+  ~full_name,     ~date_of_birth, ~postcode,
+  "Tobias Funke",  "1964-04-04",  "G42 7RY",
+  "Buster Bluth",  "1970-10-30",  "G1 8QP",
+  "Kitty Sanchez", "1975-07-20",  "G12 2LT",
+  "Buster Bluth",  "1970-10-30",  "G55 5AD"
+  )
+
+customers1 <- dplyr::mutate(customers, 
+                            id = paste0(full_name, "_", date_of_birth))
+
+print(customers1)
+```
+Another approach is sequential. You create an id from 1 to n depending on the 
+row. In small examples this might be ok. But what if your data is big? This 
+becomes impractical or impossible. What if someone else is updating the data 
+too? This is where UUIDs come in.
+
+```{r}
+customers2 <- mutate(customers, id = 1:n())
+
+print(customers2)
+```
+
+The most common forms of UUIDs use a combination of your machine's MAC address, 
+random characters, and a timestamp. The clever part is that you don't need to 
+know prior UUIDs to be confident a new one is unique. Why is that?
+
+It comes down to probability theory. Wikipedia has a good example. To have a 50% probability of at least 1 collision you would need to have 2.71 quintillion 
+UUIDs. This number is so big you would need to generate a billion UUIDs every 
+second for 85 years!
+
+So how do you use them in R? Luckily there is a great package called uuid that 
+makes it easy.
+
+```{r}
+library(uuid)
+
+# No time component
+
+customers3 <- mutate(customers, id = uuid::UUIDgenerate(n = n()))
+
+print(customers3)
+
+# With time component
+
+customers4 <- mutate(customers, id = UUIDgenerate(use.time = TRUE, n = n()))
+
+print(customers4)
+```
+
+One thing to be aware of is memory. If storage space is a major issue for you 
+then another approach might be more efficient because each UUID takes up 128 
+bits. In most cases though this is not an issue.
+
+Thanks for reading, if you liked this then follow me on twitter for mainly R and 
+data science stuff (though I make no promises)
+[\@neilgcurrie](https://twitter.com/neilgcurrie).
