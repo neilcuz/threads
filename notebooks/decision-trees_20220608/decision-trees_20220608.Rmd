@@ -146,13 +146,13 @@ models <- tune_grid(model_spec, transported ~ ., resamples = train_folds,
 Now we see how our model performed and select the best parameter combination. At this stage you might take a step back and try new parameter combinations you suspect may improve things but we will skip that here. 
 
 ```{r}
-tune::collect_metrics(models)
+model_metrics <- tune::collect_metrics(models)
 ggplot2::autoplot(models)
 
 ggsave(glue("{here::here()}/thread-figures/decision-trees_20220608/metrics.png"), 
        width = 7.65, height = 6.375, dpi = 550)
 
-tune::show_best(models, "accuracy")
+best_paras <- tune::show_best(models, "accuracy")
 
 final_model <- models |> 
   tune::select_best("accuracy") |> 
