@@ -1,37 +1,61 @@
----
-title: "Spark Intro"
-output:
-  github_document:
-    df_print: paged
-editor_options:
-  markdown:
-    wrap: 80
----
+Spark Intro
+================
 
-```{r}
+``` r
 library(glue)
 library(here)
+```
+
+    ## here() starts at /Users/neilcurrie/freelance/socials/threads
+
+``` r
 library(readr)
 library(dplyr)
+```
 
+    ## 
+    ## Attaching package: 'dplyr'
+
+    ## The following objects are masked from 'package:stats':
+    ## 
+    ##     filter, lag
+
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     intersect, setdiff, setequal, union
+
+``` r
 path <- glue("{here::here()}/notebooks/spark-intro_20220615/")
 file <- glue("{path}data/taxi_trip_data.csv")
 
 df <- read_csv(file)
+```
 
+    ## Rows: 10000000 Columns: 17
+
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## chr  (9): trip_distance, store_and_fwd_flag, fare_amount, extra, mta_tax, ti...
+    ## dbl  (6): vendor_id, passenger_count, rate_code, payment_type, pickup_locati...
+    ## dttm (2): pickup_datetime, dropoff_datetime
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+``` r
 summary_df <- df |> 
-  select(trip_distance, passenger_count, total_amount, 
-         pickup_location_id) |> 
-  filter(trip_distance >= 5, passenger_count > 1) |> 
-  mutate(total_amount = as.numeric(total_amount),
-         total_amount_per_head = total_amount / passenger_count) |> 
-  group_by(pickup_location_id) |> 
-  summarise(mean_amount = mean(total_amount_per_head, na.rm = TRUE))
+  dplyr::select(trip_distance, passenger_count, total_amount, 
+                pickup_location_id) |> 
+  dplyr::filter(trip_distance >= 5, passenger_count > 1) |> 
+  dplyr::mutate(total_amount = as.numeric(total_amount),
+                total_amount_per_head = total_amount / passenger_count) |> 
+  dplyr::group_by(pickup_location_id) |> 
+  dplyr::summarise(mean_amount = mean(total_amount_per_head, na.rm = TRUE))
 
 remove(df)
 ```
 
-```{r eval = FALSE}
+``` r
 # Install Spark and Sparklyr - run once, note you will need to change
 # eval = FALSE here to run
 
@@ -40,8 +64,7 @@ library(sparklyr)
 spark_install()
 ```
 
-
-```{r message = FALSE}
+``` r
 library(sparklyr)
 
 sc <- spark_connect(master = "local")
@@ -63,7 +86,7 @@ summary_df <- sc |>
 spark_disconnect(sc)
 ```
 
-```{r}
+``` r
 file <- glue("{path}data/NF-UQ-NIDS-v2.csv")
 
 sc <- spark_connect(master = "local")
@@ -81,8 +104,3 @@ df <- sc |>
 
 spark_disconnect(sc)
 ```
-
-
-
-
-
