@@ -11,3 +11,5 @@
 *.rds
 *.csv
 *.png
+*.spark.log
+*.derby.log
