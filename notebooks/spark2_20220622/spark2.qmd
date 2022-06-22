@@ -1,6 +1,6 @@
 ---
 title: "Using Spark for Modelling in R"
-format: html
+format: gfm
 editor: visual
 ---
 
