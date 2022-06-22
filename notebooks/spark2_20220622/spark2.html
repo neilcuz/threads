@@ -143,12 +143,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code># A tibble: 6 × 10
   carat cut       color clarity depth table price     x     y     z
   &lt;dbl&gt; &lt;ord&gt;     &lt;ord&gt; &lt;ord&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-1  0.34 Ideal     F     IF       61.7    55  1276  4.49  4.52  2.78
-2  0.7  Premium   G     VS2      61.8    58  2479  5.66  5.64  3.49
-3  1.03 Premium   H     SI1      61.9    58  4932  6.49  6.43  4   
-4  0.58 Ideal     F     VS1      62.2    55  1899  5.34  5.37  3.33
-5  0.93 Very Good J     VS2      63.3    61  3208  6.19  6.14  3.9 
-6  1.09 Ideal     F     VS2      60.9    54  7385  6.66  6.73  4.08</code></pre>
+1  0.8  Ideal     F     VS1      61.6    54  3953  5.95  5.99  3.68
+2  0.29 Ideal     G     VVS2     61.4    57   607  4.27  4.3   2.63
+3  0.39 Ideal     H     VS1      61.9    57   740  4.71  4.76  2.93
+4  0.93 Ideal     H     VS1      62.7    54  4265  6.25  6.2   3.9 
+5  1.33 Very Good F     SI1      63.3    56  8163  6.91  6.95  4.39
+6  0.51 Ideal     G     VVS2     62.9    57  1974  5.12  5.09  3.21</code></pre>
 </div>
 </div>
 <p>With sparklyr the process isn’t too different. We create a spark connection, load the diamonds data with copy_to and split the data into training and test sets with sdf_random_split. The sets can be easily accessed with $ notation.</p>
@@ -168,12 +168,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code># Source: spark&lt;?&gt; [?? x 10]
   carat cut     color clarity depth table price     x     y     z
   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-1   0.2 Ideal   D     VS2      61.5    57   367  3.81  3.77  2.33
-2   0.2 Ideal   E     VS2      59.7    55   367  3.86  3.84  2.3 
-3   0.2 Ideal   E     VS2      62.2    57   367  3.76  3.73  2.33
-4   0.2 Premium D     VS2      61.7    60   367  3.77  3.72  2.31
-5   0.2 Premium D     VS2      62.3    60   367  3.73  3.68  2.31
-6   0.2 Premium E     SI2      60.2    62   345  3.79  3.75  2.27</code></pre>
+1   0.2 Ideal   E     VS2      59.7    55   367  3.86  3.84  2.3 
+2   0.2 Ideal   E     VS2      62.2    57   367  3.76  3.73  2.33
+3   0.2 Premium D     VS2      62.3    60   367  3.73  3.68  2.31
+4   0.2 Premium E     SI2      60.2    62   345  3.79  3.75  2.27
+5   0.2 Premium E     VS2      59      60   367  3.81  3.78  2.24
+6   0.2 Premium E     VS2      59.7    62   367  3.84  3.8   2.28</code></pre>
 </div>
 </div>
 </section>
@@ -219,12 +219,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code># Source: spark&lt;?&gt; [?? x 4]
   price carat cut       xyz
   &lt;int&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt;
-1   367 -1.26 Ideal   -1.22
-2   367 -1.26 Ideal   -1.22
-3   367 -1.26 Ideal   -1.23
-4   367 -1.26 Premium -1.24
-5   367 -1.26 Premium -1.25
-6   345 -1.26 Premium -1.24</code></pre>
+1   367 -1.26 Ideal   -1.21
+2   367 -1.26 Ideal   -1.23
+3   367 -1.26 Premium -1.24
+4   345 -1.26 Premium -1.24
+5   367 -1.26 Premium -1.24
+6   367 -1.26 Premium -1.22</code></pre>
 </div>
 </div>
 </section>
@@ -247,9 +247,9 @@ stats::lm(formula = price ~ ., data = data)
 
 Coefficients:
 (Intercept)        carat        cut.L        cut.Q        cut.C        cut^4  
-    3594.26      2808.15      1205.55      -525.02       367.25        77.93  
+    3624.01      3177.11      1201.29      -506.25       360.17        80.64  
         xyz  
-     931.65  </code></pre>
+     584.83  </code></pre>
 </div>
 </div>
 <p>With Spark the steps are similar but we use the ml_linear_regression function.</p>
@@ -262,16 +262,16 @@ Coefficients:
 <div class="cell-output cell-output-stdout">
 <pre><code>Deviance Residuals:
       Min        1Q    Median        3Q       Max 
--17486.98   -782.78    -40.49    519.52  12299.65 
+-17496.09   -790.84    -37.13    520.51  12718.20 
 
 Coefficients:
   (Intercept)         carat     cut_Ideal   cut_Premium cut_Very Good 
-    2463.5328     3621.2717     1728.7083     1374.6480     1439.6583 
+   2360.32424    3663.02735    1841.74304    1489.35053    1554.26668 
      cut_Good           xyz 
-    1078.1305       95.1055 
+   1160.64287      70.08239 
 
-R-Squared: 0.8579
-Root Mean Squared Error: 1496</code></pre>
+R-Squared: 0.8567
+Root Mean Squared Error: 1510</code></pre>
 </div>
 </div>
 <p>diamonds is a small dataset. Fitting a model can be computationally heavy.</p>
@@ -288,16 +288,16 @@ Root Mean Squared Error: 1496</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code>Deviance Residuals:
       Min        1Q    Median        3Q       Max 
--17486.98   -782.78    -40.49    519.52  12299.65 
+-17496.09   -790.84    -37.13    520.51  12718.20 
 
 Coefficients:
   (Intercept)         carat     cut_Ideal   cut_Premium cut_Very Good 
-    2463.5328     3621.2717     1728.7083     1374.6480     1439.6583 
+   2360.32424    3663.02735    1841.74304    1489.35053    1554.26668 
      cut_Good           xyz 
-    1078.1305       95.1055 
+   1160.64287      70.08239 
 
-R-Squared: 0.8579
-Root Mean Squared Error: 1496</code></pre>
+R-Squared: 0.8567
+Root Mean Squared Error: 1510</code></pre>
 </div>
 </div>
 <p>Evaluating a model on the training set is easy with the yardstick package. The metrics function is particularly good.&nbsp;</p>
@@ -313,9 +313,9 @@ Root Mean Squared Error: 1496</code></pre>
 <pre><code># A tibble: 3 × 3
   .metric .estimator .estimate
   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
-1 rmse    standard    1513.   
+1 rmse    standard    1519.   
 2 rsq     standard       0.857
-3 mae     standard     990.   </code></pre>
+3 mae     standard     996.   </code></pre>
 </div>
 </div>
 <p>With Spark we also have a great option using ml_evaluate. We can then use $ notation to extract various statistics.</p>
@@ -327,11 +327,11 @@ Root Mean Squared Error: 1496</code></pre>
 <span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>train_metrics2<span class="sc">$</span>r2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.8579416</code></pre>
+<pre><code>[1] 0.8566881</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>train_metrics2<span class="sc">$</span>mean_squared_error</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 2239364</code></pre>
+<pre><code>[1] 2279180</code></pre>
 </div>
 </div>
 </section>
@@ -368,9 +368,9 @@ Root Mean Squared Error: 1496</code></pre>
 <pre><code># A tibble: 3 × 3
   .metric .estimator .estimate
   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
-1 rmse    standard    1543.   
-2 rsq     standard       0.849
-3 mae     standard     991.   </code></pre>
+1 rmse    standard    1505.   
+2 rsq     standard       0.853
+3 mae     standard     977.   </code></pre>
 </div>
 </div>
 <p>And now the sparklyr approach.&nbsp;</p>
@@ -406,11 +406,11 @@ Root Mean Squared Error: 1496</code></pre>
 <span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a>test_metrics2<span class="sc">$</span>r2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.8531835</code></pre>
+<pre><code>[1] 0.8560732</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>test_metrics2<span class="sc">$</span>mean_squared_error</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 2389298</code></pre>
+<pre><code>[1] 2294574</code></pre>
 </div>
 </div>
 </section>
