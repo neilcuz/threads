@@ -13,3 +13,4 @@
 *.png
 *.spark.log
 *.derby.log
+*log4j.spark.log
