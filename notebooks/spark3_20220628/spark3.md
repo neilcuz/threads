@@ -1,19 +1,14 @@
 spark3
 ================
 
-## Quarto
-
-Quarto enables you to weave together content and executable code into a
-finished document. To learn more about Quarto see <https://quarto.org>.
-
-## Running Code
-
 ### Setup
 
 ``` r
 library(dplyr)
 library(sparklyr)
 ```
+
+### Standard Join
 
 ``` r
 id <- 1:4
@@ -34,17 +29,19 @@ print(data_frame3)
     # A tibble: 1,000 × 3
           id animal    colour
        <int> <chr>     <chr> 
-     1     4 monkey    lime  
-     2     3 crocodile black 
-     3     2 goldfish  red   
+     1     2 shark     red   
+     2     4 monkey    lime  
+     3     4 monkey    lime  
      4     2 crocodile red   
-     5     2 mole      red   
-     6     3 mole      black 
-     7     1 monkey    indigo
-     8     4 shark     lime  
-     9     1 monkey    indigo
+     5     1 shark     indigo
+     6     1 mole      indigo
+     7     2 goldfish  red   
+     8     1 mole      indigo
+     9     1 mole      indigo
     10     3 shark     black 
     # … with 990 more rows
+
+### Sort-Merge-Join
 
 ``` r
 # Create spark connection
@@ -69,17 +66,19 @@ print(df3)
     # A tibble: 1,000 × 3
           id animal    colour
        <int> <chr>     <chr> 
-     1     1 monkey    indigo
-     2     1 monkey    indigo
-     3     1 crocodile indigo
-     4     1 crocodile indigo
-     5     1 shark     indigo
-     6     1 mole      indigo
-     7     1 goldfish  indigo
-     8     1 mole      indigo
-     9     1 monkey    indigo
-    10     1 monkey    indigo
+     1     1 shark     indigo
+     2     1 mole      indigo
+     3     1 mole      indigo
+     4     1 mole      indigo
+     5     1 monkey    indigo
+     6     1 goldfish  indigo
+     7     1 monkey    indigo
+     8     1 crocodile indigo
+     9     1 goldfish  indigo
+    10     1 shark     indigo
     # … with 990 more rows
+
+### Broadcast Join
 
 ``` r
 sdf3_broadcast <- sparklyr::left_join(sdf1, 
@@ -93,17 +92,19 @@ print(df3_broadcast)
     # A tibble: 1,000 × 3
           id animal    colour
        <int> <chr>     <chr> 
-     1     1 monkey    indigo
-     2     1 monkey    indigo
-     3     1 crocodile indigo
-     4     1 crocodile indigo
-     5     1 shark     indigo
-     6     1 mole      indigo
-     7     1 goldfish  indigo
-     8     1 mole      indigo
-     9     1 monkey    indigo
-    10     1 monkey    indigo
+     1     1 shark     indigo
+     2     1 mole      indigo
+     3     1 mole      indigo
+     4     1 mole      indigo
+     5     1 monkey    indigo
+     6     1 goldfish  indigo
+     7     1 monkey    indigo
+     8     1 crocodile indigo
+     9     1 goldfish  indigo
+    10     1 shark     indigo
     # … with 990 more rows
+
+### Salted Joins
 
 ``` r
 # Create dummy data
@@ -135,16 +136,16 @@ print(df3_default)
     # A tibble: 100,000 × 3
           id profession working_pattern
        <int> <chr>      <chr>          
-     1     1 doctor     full time      
-     2     1 doctor     full time      
-     3     1 dentist    full time      
+     1     1 optician   full time      
+     2     1 nurse      full time      
+     3     1 doctor     full time      
      4     1 optician   full time      
-     5     1 doctor     full time      
-     6     1 optician   full time      
-     7     1 doctor     full time      
-     8     1 optician   full time      
-     9     1 nurse      full time      
-    10     1 nurse      full time      
+     5     1 nurse      full time      
+     6     1 dentist    full time      
+     7     1 optician   full time      
+     8     1 dentist    full time      
+     9     1 dentist    full time      
+    10     1 doctor     full time      
     # … with 99,990 more rows
 
 ``` r
@@ -163,12 +164,12 @@ head(sdf1)
     # Source: spark<?> [?? x 4]
          id profession  salt id_salted
       <int> <chr>      <int> <chr>    
-    1     1 doctor         6 1-6      
-    2     1 doctor         6 1-6      
-    3     1 dentist        7 1-7      
-    4     1 optician       5 1-5      
-    5     1 doctor         4 1-4      
-    6     1 optician       6 1-6      
+    1     1 optician       6 1-6      
+    2     1 nurse          7 1-7      
+    3     1 doctor         2 1-2      
+    4     1 optician       6 1-6      
+    5     1 nurse          6 1-6      
+    6     1 dentist        4 1-4      
 
 ``` r
 df2 <- tibble(id_salted = paste(1, 1:8, sep = "-")) |> 
@@ -187,14 +188,14 @@ print(df3_salted)
     # A tibble: 100,000 × 5
           id profession  salt id_salted working_pattern
        <int> <chr>      <int> <chr>     <chr>          
-     1     1 optician       7 1-7       full time      
+     1     1 doctor         7 1-7       full time      
      2     1 dentist        7 1-7       full time      
-     3     1 optician       7 1-7       full time      
-     4     1 nurse          7 1-7       full time      
-     5     1 nurse          7 1-7       full time      
-     6     1 optician       7 1-7       full time      
+     3     1 nurse          7 1-7       full time      
+     4     1 dentist        7 1-7       full time      
+     5     1 optician       7 1-7       full time      
+     6     1 nurse          7 1-7       full time      
      7     1 optician       7 1-7       full time      
      8     1 dentist        7 1-7       full time      
-     9     1 doctor         7 1-7       full time      
-    10     1 optician       7 1-7       full time      
+     9     1 nurse          7 1-7       full time      
+    10     1 nurse          7 1-7       full time      
     # … with 99,990 more rows

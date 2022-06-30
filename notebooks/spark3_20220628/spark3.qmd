@@ -4,12 +4,6 @@ format: gfm
 editor: visual
 ---
 
-## Quarto
-
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
-
-## Running Code
-
 ### Setup
 
 ```{r}
@@ -17,6 +11,8 @@ Quarto enables you to weave together content and executable code into a finished
 library(dplyr)
 library(sparklyr)
 ```
+
+### Standard Join
 
 ```{r}
 id <- 1:4
@@ -33,6 +29,8 @@ data_frame2 <- tibble(id, colour)
 data_frame3 <- dplyr::left_join(data_frame1, data_frame2, by = "id")
 print(data_frame3)
 ```
+
+### Sort-Merge-Join
 
 ```{r}
 # Create spark connection
@@ -54,6 +52,8 @@ df3 <- collect(sdf3)
 print(df3)
 ```
 
+### Broadcast Join
+
 ```{r}
 sdf3_broadcast <- sparklyr::left_join(sdf1, 
                                       sdf_broadcast(sdf2),
@@ -62,6 +62,8 @@ sdf3_broadcast <- sparklyr::left_join(sdf1,
 df3_broadcast <- collect(sdf3_broadcast)
 print(df3_broadcast)
 ```
+
+### Salted Joins
 
 ```{r}
 # Create dummy data
@@ -113,11 +115,4 @@ sdf3_salted <- sparklyr::left_join(sdf1, sdf2, by = "id_salted")
 df3_salted <- collect(sdf3_salted)
 
 print(df3_salted)
-```
-
-```{r}
-
-
-
-
 ```
