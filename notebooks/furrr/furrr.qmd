@@ -80,8 +80,6 @@ print(min(process_times) / process_times[1])
 ### Plot it
 
 ```{r}
-# Plot it
-
 times <- tibble(workers = as.character(1:8), process_time = process_times) |> 
   mutate(fastest = case_when(process_time == min(process_time) ~ "yes",
                              TRUE ~ "no"))
