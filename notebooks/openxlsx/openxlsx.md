@@ -1,0 +1,101 @@
+Using Spreadsheets in R with openxlsx
+================
+
+## Setup
+
+``` r
+library(openxlsx)
+library(dplyr)
+library(ggplot2)
+library(glue)
+```
+
+### Create data for writing
+
+``` r
+diamonds_xl <- diamonds |> 
+  group_by(cut) |> 
+  summarise(n = n(), average_price = mean(price), total_price = sum(price))
+```
+
+### Setting up a workbook
+
+``` r
+wb <- createWorkbook()
+
+addWorksheet(wb, "diamonds")
+addWorksheet(wb, "starwars")
+
+filename <- glue("{here::here()}/data/workbook.xlsx")
+
+saveWorkbook(wb, filename)
+```
+
+### Adding data
+
+``` r
+writeData(wb, sheet = "diamonds", x = diamonds_xl, startCol = 2, startRow = 1)
+writeData(wb, sheet = "starwars", x = starwars, rowNames = TRUE)
+```
+
+### Adding formulas
+
+``` r
+# Add headings
+
+writeData(wb, sheet = "diamonds", x = "Target Price", startCol = 7)
+writeData(wb, sheet = "diamonds", x = "Price Difference", startCol = 8)
+
+# the user will write a target price manually later
+
+# add a formula to calculate the difference. 
+# You dont need the equal sign
+
+price_diff <- glue("G{2:6}-E{2:6}")
+
+writeFormula(wb, "diamonds", x = price_diff, startCol = 8, startRow = 2)
+```
+
+### Create styles and write to worksheet
+
+``` r
+# Some different styles
+style_header <- createStyle(fontSize = 16, fontColour = "blue", border = "bottom", 
+                            wrapText = TRUE)
+
+style_currency <- createStyle(numFmt = "CURRENCY")
+style_user_input <- createStyle(fgFill = "yellow")
+
+# Write
+addStyle(wb, sheet = "diamonds", style_header, rows = 1, cols = 2:8, gridExpand = TRUE)
+addStyle(wb, sheet = "diamonds", style_currency, rows = 2:6, cols = 4:5, gridExpand = TRUE)
+addStyle(wb, sheet = "diamonds", style_user_input, rows = 2:6, cols = 7, gridExpand = TRUE)
+```
+
+### Resizing columns and rows, freezing panes, sort headers
+
+``` r
+setColWidths(wb, sheet = "diamonds", cols = c(1, 6), widths = 3)
+setColWidths(wb, sheet = "diamonds", cols = c(2:5, 7:8), widths = 15)
+setRowHeights(wb, sheet = "diamonds", rows = 1, heights = 50)
+
+freezePane(wb, sheet = "diamonds", firstActiveCol = 3)
+
+colnames(diamonds_xl) <- c("Cut", "Num Diamonds", "Average Price", "Total Price")
+writeData(wb, sheet = "diamonds", x = diamonds_xl, startCol = 2, startRow = 1)
+```
+
+### Conditional formatting
+
+``` r
+neg_style <- createStyle(fontColour = "#9C0006", bgFill = "#FFC7CE")
+pos_style <- createStyle(fontColour = "#006100", bgFill = "#C6EFCE")
+
+conditionalFormatting(wb, sheet = "diamonds", cols = 8, rows = 2:6, 
+                      rule = "<0", style = neg_style)
+
+conditionalFormatting(wb, sheet = "diamonds", cols = 8, rows = 2:6, 
+                      rule = ">0", style = pos_style)
+
+saveWorkbook(wb, filename, overwrite = TRUE)
+```
