@@ -1,0 +1,244 @@
+---
+title: "Using Spark for Modelling in R"
+format: gfm
+editor: visual
+---
+
+## Setup
+
+```{r}
+#| setup, results = FALSE, warning = FALSE, message = FALSE
+library(ggplot2)
+library(rsample)
+library(dplyr)
+library(sparklyr)
+library(tidymodels)
+```
+
+## Initial split
+
+For prediction problems it is good practice to split your data into a training and test set. 
+
+In a standard approach the rsample package in the tidymodels ecosystem makes this easy.
+
+```{r}
+#| split-standard,
+# Approach 1 - standard
+
+sets <- initial_split(diamonds, prop = 0.7)
+
+train_raw_tbl <- training(sets)
+
+head(train_raw_tbl)
+```
+
+With sparklyr the process isn't too different. We create a spark connection, load the diamonds data with copy_to and split the data into training and test sets with sdf_random_split. The sets can be easily accessed with \$ notation.
+
+```{r}
+#| split-sparklyr, message = FALSE, warning = FALSE
+# Approach 2 - sparklyr
+
+sc <- spark_connect(master = "local")
+
+diamonds_sdf <- copy_to(sc, diamonds)
+
+sets_sdf <- sdf_random_split(diamonds_sdf, train = 0.7, test = 0.3)
+
+train_raw_sdf <- sets_sdf$train
+
+head(train_raw_sdf)
+```
+
+## Feature engineering
+
+A typical dplyr approach is displayed. Notice the use of the scale function. It outputs a matrix so I wrap it in as.vector to keep things nice and clean.
+
+```{r}
+#| features-standard, warning = FALSE, message = FALSE
+# Approach 1 - standard
+
+train_tbl <- train_raw_tbl |> 
+  mutate(xyz = x * y * z) |> 
+  select(price, carat, cut, xyz) |> 
+  mutate(carat = as.vector(scale(carat)),
+         xyz = as.vector(scale(xyz)))
+```
+
+And now for sparklyr. If you used the scale or as.vector functions this will throw an error when we collect.
+
+Why is that? 
+
+This is because sparklyr cannot translate these functions into Spark SQL. Spark doesn't know them.
+
+```{r}
+#| features-sparklyr-error, eval = FALSE, error = FALSE
+# Approach 2 - sparklyr (with an error!)
+
+train_sdf <- train_raw_sdf |>
+  mutate(xyz = x * y * z) |>
+  select(price, carat, cut, xyz) |>
+  mutate(carat = as.vector(mean(carat)),
+         xyz = as.vector(mean(xyz)))
+
+head(train_sdf)
+```
+
+We need to use functions that can be translated. You have already seen some - mutate and select. Luckily mean and sd can be translated and these are used to standardise.
+
+We could have used the mean and sd functions in approach 1 but this is a good lesson.
+
+```{r}
+#| features-sparklyr, warning = FALSE, message = FALSE
+# Approach 2 - sparklyr
+
+train_sdf <- train_raw_sdf |> 
+  mutate(xyz = x * y * z) |> 
+  select(price, carat, cut, xyz) |> 
+  mutate(carat = (carat - mean(carat)) / sd(carat),
+         xyz = (xyz - mean(xyz)) / sd(xyz))
+
+head(train_sdf)
+```
+
+## Fitting a model on the training set
+
+Now we fit a model. Firstly a standard approach. 
+
+You could also use the lm function from base R but I like the workflow from tidymodels, particularly for more complex modelling.
+
+```{r}
+#| fit-standard,
+# Approach 1 - standard
+
+fit1 <- linear_reg() |> fit(price ~ ., data = train_tbl)
+
+fit1
+```
+
+With Spark the steps are similar but we use the ml_linear_regression function.
+
+```{r}
+#| fit-sparklyr, warning = FALSE
+# Approach 2 - sparklyr
+
+fit2 <- ml_linear_regression(train_sdf, price ~ .)
+
+summary(fit2)
+
+```
+
+diamonds is a small dataset. Fitting a model can be computationally heavy.
+
+With big data we can improve performance by executing the data wrangling steps prior to fitting the model.
+
+We do this with the compute function. It saves the cached data in Spark memory.
+
+```{r}
+#| fit-sparklyr-compute, warning = FALSE
+# Approach 2 - sparklyr
+
+train_sdf_cached <- compute(train_sdf, "train_sdf_cached") 
+
+fit2 <- ml_linear_regression(train_sdf_cached, price ~ .)
+
+summary(fit2)
+```
+
+Evaluating a model on the training set is easy with the yardstick package. The metrics function is particularly good. 
+
+```{r}
+#| eval-standard, warning = FALSE
+
+# Approach 1 - standard
+
+train_metrics1 <- train_tbl |> 
+  mutate(price_pred = predict(fit1, train_tbl)$.pred) |> 
+  metrics(truth = price, estimate = price_pred)
+
+train_metrics1
+```
+
+With Spark we also have a great option using ml_evaluate. We can then use \$ notation to extract various statistics.
+
+```{r}
+# eval-sparklyr, warning = FALSE
+# Approach 2 - sparklyr
+
+train_metrics2 <- ml_evaluate(fit2, train_sdf_cached)
+
+train_metrics2$r2
+train_metrics2$mean_squared_error
+```
+
+## Predicting the test set
+
+Finally we want to make predictions on the test set and evaluate performance. We already saw some evaluation of the training set and the approach here is roughly the same.
+
+First up the standard approach. Note my attempts to avoid data leakage into the test set here.
+
+```{r}
+#| test-standard, warning = FALSE
+# Approach 1 - standard
+
+# To avoid data leakage we scale using the mean and sd values from the 
+# training set
+
+means_sds <- train_raw_tbl |> 
+   mutate(xyz = x * y * z) |> 
+  summarise(mean_xyz = mean(xyz),
+            sd_xyz = sd(xyz),
+            mean_carat = mean(carat),
+            sd_carat = sd(carat))
+
+test_tbl <- sets |> 
+  testing() |> 
+  mutate(xyz = x * y * z) |> 
+  select(price, carat, cut, xyz) |> 
+  mutate(carat = (carat - means_sds$mean_carat) / means_sds$sd_carat,
+         xyz = (xyz - means_sds$mean_xyz) / means_sds$sd_xyz) 
+ 
+
+test_predictions <- mutate(test_tbl, 
+                           price_pred = predict(fit1, test_tbl)$.pred)
+
+metrics(test_predictions, truth = price, estimate = price_pred)
+```
+
+And now the sparklyr approach. 
+
+Notice I collect the means data and then save those means and standard deviations as actual variables? 
+
+This is because of the translation problem again. Spark SQL doesn't like the \$ notation.
+
+```{r}
+#| test-sparklyr, warning = FALSE
+# Approach 2 - sparklyr
+
+means_sds <- train_raw_sdf |> 
+   mutate(xyz = x * y * z) |> 
+  summarise(mean_xyz = mean(xyz),
+            sd_xyz = sd(xyz),
+            mean_carat = mean(carat),
+            sd_carat = sd(carat)) |> 
+  collect()
+
+mean_carat <- means_sds$mean_carat
+sd_carat <- means_sds$sd_carat
+mean_xyz <- means_sds$mean_xyz
+sd_xyz <- means_sds$sd_xyz
+
+test_sdf <- sets_sdf$test |> 
+  mutate(xyz = x * y * z) |> 
+  select(price, carat, cut, xyz) |> 
+  mutate(carat = (carat - mean_carat) / sd_carat,
+         xyz = (xyz - mean_xyz) / sd_xyz)
+ 
+test_predictions <- fit2 |>
+  ml_predict(test_sdf) |>
+  collect()
+
+test_metrics2 <- ml_evaluate(fit2, test_sdf)
+
+test_metrics2$r2
+test_metrics2$mean_squared_error
+```

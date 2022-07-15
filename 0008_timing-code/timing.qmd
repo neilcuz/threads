@@ -1,0 +1,88 @@
+---
+title: "Timing Code"
+format: gfm
+editor: visual
+---
+
+### Setup
+
+```{r}
+#| results = FALSE, warning = FALSE, message = FALSE
+library(tidyverse)
+library(tictoc)
+library(microbenchmark)
+```
+
+### 1. Sys.time approach
+
+```{r}
+# Record the start time
+
+start <- Sys.time()
+
+diamonds_mass <- diamonds |> 
+  mutate(xyz = x * y * z) |> 
+  group_by(cut) |> 
+  summarise(xyz = mean(xyz)) |> 
+  arrange(desc(xyz))
+
+# Record the end time
+
+end <- Sys.time()
+
+# Difference gives the time taken
+
+end - start
+```
+
+### 2. tictoc approach
+
+```{r}
+# similar to the Sys.time approach
+
+tic()
+
+diamonds |> 
+  mutate(xyz = x * y * z) |> 
+  group_by(cut) |> 
+  summarise(xyz = mean(xyz)) |> 
+  arrange(desc(xyz))
+
+toc()
+
+# you can setup multiple timers and name them
+
+tic("timer1")
+tic("timer2")
+
+Sys.sleep(1)
+
+toc()
+toc()
+```
+
+### 3. Using microbenchmark
+
+```{r}
+f1 <- function (x) {
+  
+  x |> 
+    group_by(year, city) |> 
+    summarise(listings = mean(listings), .groups = "drop") |> 
+    arrange(desc(listings)) |>  
+    filter(year == 2000)
+  
+} 
+
+f2 <- function (x) {
+
+  x |> 
+    filter(year == 2000) |> 
+    group_by(city) |> 
+    summarise(listings = mean(listings), .groups = "drop") |> 
+    arrange(desc(listings))
+  
+}
+
+microbenchmark(f1(txhousing), f2(txhousing))
+```

@@ -1,0 +1,207 @@
+---
+title: "R Notebook"
+output:
+  github_document:
+    df_print: paged
+editor_options:
+  markdown:
+    wrap: 80
+---
+
+This is the first in a series of threads exploring tree-based machine learning models in R. Decision trees underpin some powerful machine learning algorithms like random forest or xgboost.
+
+Decision trees come in two types. When the variable we want to predict is categorical (yes/no; red/blue/yellow) we have a classification tree. When the variable is continuous (income; litres of whisky) this is a regression tree. This thread focuses on classification trees. 
+
+Let's look at a dummy example. We want to predict if survived is Yes or No using the other features. The algorithm breaks the data into smaller and smaller chunks creating a 'tree' in the process. A tree is a set of if else statements which we use to make a prediction. 
+
+Splits are always binary. If you have a feature with multiple categories (orange/green/purple) these are grouped into 2 (orange/green, purple) with each combination evaluated to select the best one.
+
+How are the best splits chosen? Several criteria can be used. I don't want to get too maths-heavy here but essentially the best splits are ones which create the most similar groups. More similar groups leads to better predictions.
+
+Now we have covered some theory let's do a problem in R using the tidymodels package. tidymodels isn't really one package it is a collection of packages in a similar way to the tidyverse.
+
+<https://www.tidymodels.org>
+
+The data we will use is from the Kaggle spaceship titanic challenge. We want to predict which passengers were transported off the planet using the other features.
+
+<https://www.kaggle.com/competitions/spaceship-titanic>
+
+Splitting your data for fitting machine learning models is a whole different rabbit hole to go down. In the real world you would want to split your data into a training and test split as a minimum. Luckily this has already been done for us so we read it in.
+
+```{r}
+library(glue)
+library(readr)
+library(dplyr, warn.conflicts = FALSE)
+library(janitor, warn.conflicts = FALSE)
+library(stringr)
+library(ggplot2)
+
+file_train <- glue::glue(
+  "{here::here()}/notebooks/decision-trees_20220608/train.csv",
+)
+
+# We want to predict the transported variable using the others. 
+
+train <- file_train |> 
+  readr::read_csv(progress = FALSE, show_col_types = FALSE) |> 
+  janitor::clean_names() |> 
+  dplyr::relocate(transported)
+
+print(train)
+```
+
+```{r}
+library(stringr)
+
+summary(train)
+
+# First a bit of data prep and some simple feature engineering to create the 
+# cabin_prefix variable.
+
+train <- train |> 
+  dplyr::mutate(cabin_prefix = stringr::str_sub(cabin, 1, 1)) |> 
+  mutate(dplyr::across(where(~is.character(.)|is.logical(.)), as.factor)) |> 
+  select(-name, -passenger_id, -cabin) 
+
+# Some NAs but not in the target variable so all good for decision trees
+
+summary(train)
+```
+
+Before we fit a model we need to do some data wrangling and exploring. I have also done some simple feature engineering here by creating a cabin_prefix variable. Hopefully it helps predictions.
+
+```{r}
+library(ggplot2)
+library(tidyr)
+
+# barplots for the categorical variables
+
+train |> 
+  # too many unique in these cols to be useful in plot
+  select(where(is.factor)) |> 
+  tidyr::pivot_longer(everything(), names_to = "var_name") |> 
+  dplyr::arrange(var_name, value) |> 
+  dplyr::count(var_name, value) |> 
+  ggplot2::ggplot(aes(value, n, group = var_name)) +
+  ggplot2::geom_bar(stat = "identity") +
+  ggplot2::coord_flip() +
+  ggplot2::facet_wrap(var_name ~ ., scales = "free")
+
+ggsave(glue("{here::here()}/thread-figures/decision-trees_20220608/cat-vars.png"), 
+       width = 7.65, height = 6.375, dpi = 550)
+ 
+# line charts for the numeric variables
+
+train |> 
+  select(where(is.numeric)) |> 
+  pivot_longer(everything(), names_to = "var_name") |> 
+  ggplot(aes(value, group = var_name)) +
+  ggplot2::geom_density() +
+  facet_wrap(var_name ~ ., scales = "free", nrow = 3, ncol = 2)
+
+ggsave(glue("{here::here()}/thread-figures/decision-trees_20220608/num-vars.png"), 
+       width = 7.65, height = 6.375, dpi = 550)
+```
+
+Next we split our data into folds, an important step to prevent overfitting. It would be easy to create a model which fits our training set too well but makes poor predictions on new data. K-Fold Cross validation combats this problem. 5 folds are fairly typical.
+
+```{r}
+library(tidymodels)
+
+set.seed(500)
+train_folds <- rsample::vfold_cv(train, v = 5)
+```
+
+We then specify our model. Notice I have supplied tune() to the decision_tree function arguments. This, combined with the parameters I define from the grid_regular function ensures the best parameters for our model are found.
+
+```{r}
+model_spec <- parsnip::decision_tree(mode = "classification", 
+                                     cost_complexity = tune::tune(),
+                                     tree_depth = tune(),
+                                     min_n = tune())
+
+# In reality we might expand this out to try more combinations
+
+model_paras <- dials::grid_regular(dials::cost_complexity(), 
+                                   dials::tree_depth(), 
+                                   dials::min_n(), 
+                                   levels = 4)
+
+print(model_paras)
+```
+
+Now we tune our model. Notice I have used the doParallel package here. This means parameters will be tuned at the same time across your computers cores and, even in this small example, it saves us time. This is very powerful for larger datasets. 
+
+```{r}
+library(doParallel)
+
+doParallel::registerDoParallel()
+
+set.seed(505)
+
+models <- tune_grid(model_spec, transported ~ ., resamples = train_folds, 
+                    grid = model_paras)
+```
+
+Now we see how our model performed and select the best parameter combination. At this stage you might take a step back and try new parameter combinations you suspect may improve things but we will skip that here. 
+
+```{r}
+print(tune::collect_metrics(models))
+ggplot2::autoplot(models)
+
+ggsave(glue("{here::here()}/thread-figures/decision-trees_20220608/metrics.png"), 
+       width = 7.65, height = 6.375, dpi = 550)
+
+print(tune::show_best(models, "accuracy"))
+
+final_model <- models |> 
+  tune::select_best("accuracy") |> 
+  tune::finalize_model(model_spec, parameters = _)
+
+print(final_model)
+```
+
+```{r}
+library(vip)
+
+model_fit <- fit(final_model, transported ~ ., train)
+
+png(glue("{here::here()}/thread-figures/decision-trees_20220608/importance.png"),
+    units = "in", width = 7.65, height = 6.375, res = 550 )
+
+vip::vip(model_fit, geom = "col") 
+
+dev.off()
+```
+
+We now predict the test set. This is a kaggle challenge so we don't have labels for the test set. But to get our score we can submit our results to Kaggle as a csv file. We obtain an accuracy of 78% - not bad and similar to our training performance.
+
+```{r}
+file_test <- glue("{here::here()}/notebooks/decision-trees_20220608/test.csv")
+
+# We want to predict the transported variable using the others. 
+
+test <- file_test |> 
+  read_csv(progress = FALSE, show_col_types = FALSE) |> 
+  clean_names() |> 
+  mutate(cabin_prefix = str_sub(cabin, 1, 1)) |>
+  mutate(across(where(~is.character(.)|is.logical(.)), as.factor)) |> 
+  select(-name, -cabin) 
+  
+predicted <- tibble(PassengerId = test$passenger_id, 
+                    Transported = predict(model_fit, test)) |> 
+  mutate(Transported = unlist(Transported),
+         Transported = stringr::str_to_sentence(Transported))
+
+print(predicted)
+
+file_predicted <- glue(
+  "{here::here()}/notebooks/decision-trees_20220608/predicted.csv"
+)
+
+readr::write_csv(predicted, file = file_predicted)
+```
+
+
+
+
