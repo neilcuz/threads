@@ -11,7 +11,7 @@ The code for each topic can be found in the above repositories, numbered by ID. 
 
 |ID|Title|Description|Link to Thread|Link to Code|
 |:---|:-----|:--------|:---|:---|
-|0009|Spreadsheets in R|Using the openxlsx package for building spreadsheets in R|Thread not live|[Go to Code](https://github.com/neilcuz/threads/blob/master/0009_spreadsheets-in-r/spreadsheets-in-r.md)|
+|0009|Spreadsheets in R|Using the openxlsx package for building spreadsheets in R|[Go to Thread](https://twitter.com/neilgcurrie/status/1547974432009818114)|[Go to Code](https://github.com/neilcuz/threads/blob/master/0009_spreadsheets-in-r/spreadsheets-in-r.md)|
 |0008|Timing Code|Using Sys.time, the tictoc package and the microbenchmark package for timing code|[Go to Thread](https://twitter.com/neilgcurrie/status/1547249515408699392)|[Go to Code](https://github.com/neilcuz/threads/blob/master/0008_timing-code/timing.md)|
 |0007|Parallel Processing|Using the furrr package for iterating in parallel|[Go to Thread](https://twitter.com/neilgcurrie/status/1544351837901316096)|[Go to Code](https://github.com/neilcuz/threads/blob/master/0007_parallel-processing/furrr.md)|
 |0006|Joins with Spark in R|Using the sparklyr package for joining big data with Spark in R|[Go to Thread](https://twitter.com/neilgcurrie/status/1542538510833315840)|[Go to Code](https://github.com/neilcuz/threads/blob/master/0006_joins-with-spark-in-r/spark3.md)|
