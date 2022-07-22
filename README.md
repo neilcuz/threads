@@ -11,7 +11,7 @@ The code for each topic can be found in the above repositories, numbered by ID. 
 
 |ID|Title|Description|Link to Thread|Link to Code|
 |:---|:-----|:--------|:---|:---|
-|0010|Dumbbell Plots|Using ggplot2 to build dumbbell plots|[Go to Thread](https://twitter.com/i/timeline)|[Go to Code](https://github.com/neilcuz/threads/blob/master/0010_dumbbell-plots/dumbell-plots.md)|
+|0010|Dumbbell Plots|Using ggplot2 to build dumbbell plots|[Go to Thread](https://twitter.com/neilgcurrie/status/1550148635345620992)|[Go to Code](https://github.com/neilcuz/threads/blob/master/0010_dumbbell-plots/dumbell-plots.md)|
 |0009|Spreadsheets in R|Using the openxlsx package for building spreadsheets in R|[Go to Thread](https://twitter.com/neilgcurrie/status/1547974432009818114)|[Go to Code](https://github.com/neilcuz/threads/blob/master/0009_spreadsheets-in-r/spreadsheets-in-r.md)|
 |0008|Timing Code|Using Sys.time, the tictoc package and the microbenchmark package for timing code|[Go to Thread](https://twitter.com/neilgcurrie/status/1547249515408699392)|[Go to Code](https://github.com/neilcuz/threads/blob/master/0008_timing-code/timing.md)|
 |0007|Parallel Processing|Using the furrr package for iterating in parallel|[Go to Thread](https://twitter.com/neilgcurrie/status/1544351837901316096)|[Go to Code](https://github.com/neilcuz/threads/blob/master/0007_parallel-processing/furrr.md)|
