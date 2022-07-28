@@ -395,3 +395,9 @@ Recap:
 7\. Order deliberately
 
 8\. Align titles
+
+### #16
+
+Thanks for reading, if you liked this thread follow me [\@neilgcurrie](https://twitter.com/neilgcurrie) for mainly R and data science stuff (though I make no promises).
+
+Code and links to my other threads can be found [here](https://github.com/neilcuz/threads/blob/master/README.md).
