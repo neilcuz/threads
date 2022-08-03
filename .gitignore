@@ -10,7 +10,6 @@
 *thread-figures/
 *.rds
 *.csv
-*.png
 *.spark.log
 *.derby.log
 *log4j.spark.log
