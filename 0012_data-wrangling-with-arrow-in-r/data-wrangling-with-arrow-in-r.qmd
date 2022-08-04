@@ -5,7 +5,7 @@ editor: visual
 ---
 
 This is the code underpinning the thread Data Wrangling with Arrow in R which 
-you can find [here]().
+you can find [here](https://twitter.com/neilgcurrie/status/1554867200392998912).
 
 
 ### Setup
