@@ -2,7 +2,8 @@ Data Wrangling with Arrow in R
 ================
 
 This is the code underpinning the thread Data Wrangling with Arrow in R
-which you can find [here]().
+which you can find
+[here](https://twitter.com/neilgcurrie/status/1554867200392998912).
 
 ### Setup
 
@@ -115,18 +116,3 @@ nids <- file_nids |>
 
 print(nids)
 ```
-
-    # A tibble: 1,219,141 × 3
-       IN_PKTS IN_BYTES bytes_per_packet
-         <dbl>    <dbl>            <dbl>
-     1       9     1969             219.
-     2      12     2443             204.
-     3      32    25066             783.
-     4      14     5028             359.
-     5       7     3082             440.
-     6       5     3434             687.
-     7      11     9272             843.
-     8       7     2122             303.
-     9      14     8928             638.
-    10       9     3429             381 
-    # … with 1,219,131 more rows
