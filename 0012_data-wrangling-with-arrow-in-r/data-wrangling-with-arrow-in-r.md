@@ -1,6 +1,9 @@
 Data Wrangling with Arrow in R
 ================
 
+\* \* Update 5 Aug 2022 - I have tweaked the code slightly from the
+original thread, see comments in code below \*
+
 This is the code underpinning the thread Data Wrangling with Arrow in R
 which you can find
 [here](https://twitter.com/neilgcurrie/status/1554867200392998912).
@@ -61,6 +64,7 @@ print(taxi_standard)
      9                 10        19.7
     10                 11        10.7
     # … with 239 more rows
+    # ℹ Use `print(n = ...)` to see more rows
 
 ### NY Taxis using arrow::read_csv_arrow
 
@@ -69,7 +73,8 @@ manipulating in the same way, but this time we use the arrow package.
 
 ``` r
 taxi_arrow <- file_taxi |> 
-  read_csv_arrow() |> 
+  # Added as_data_frame = FALSE retrospecitively. Reads in data as an arrow table.
+  read_csv_arrow(as_data_frame = FALSE) |> 
   select(trip_distance, passenger_count, total_amount, pickup_location_id) |> 
   filter(trip_distance >= 5, passenger_count > 1) |> 
   mutate(total_amount = as.numeric(total_amount),
@@ -84,17 +89,18 @@ print(taxi_arrow)
     # A tibble: 261 × 2
        pickup_location_id mean_amount
                     <int>       <dbl>
-     1                  1        45.8
-     2                  2        23.5
-     3                  3        18.3
-     4                  4        13.7
-     5                  5        11.1
-     6                  6        34.7
-     7                  7        13.4
-     8                  8        27.9
-     9                  9        17.2
-    10                 10        27.6
+     1                164        17.4
+     2                143        16.4
+     3                138        17.4
+     4                141        14.0
+     5                125        16.1
+     6                 90        15.5
+     7                 74        13.8
+     8                100        16.9
+     9                239        15.4
+    10                246        16.1
     # … with 251 more rows
+    # ℹ Use `print(n = ...)` to see more rows
 
 ### NIDS using arrow::read_csv_arrow
 
@@ -105,7 +111,8 @@ work on my machine with a standard approach.
 file_nids <- glue("{here::here()}/data/NF-UQ-NIDS-v2.csv")
 
 nids <- file_nids |>
-  read_csv_arrow() |>
+  # Added as_data_frame = FALSE retrospecitively. Reads in data as an arrow table.
+  read_csv_arrow(as_data_frame = FALSE) |>
   select(IN_PKTS, IN_BYTES) |>
   mutate(IN_PKTS = as.numeric(IN_PKTS),
          IN_BYTES = as.numeric(IN_BYTES)) |>

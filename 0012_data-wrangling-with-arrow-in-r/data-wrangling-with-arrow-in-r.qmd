@@ -4,14 +4,13 @@ format: gfm
 editor: visual
 ---
 
-This is the code underpinning the thread Data Wrangling with Arrow in R which 
-you can find [here](https://twitter.com/neilgcurrie/status/1554867200392998912).
+\* \* Update 5 Aug 2022 - I have tweaked the code slightly from the original thread, see comments in code below \*
 
+This is the code underpinning the thread Data Wrangling with Arrow in R which you can find [here](https://twitter.com/neilgcurrie/status/1554867200392998912).
 
 ### Setup
 
-This installs and loads the required libraries. I have written in this way so 
-you can run it without modifying or writing manual installation code.
+This installs and loads the required libraries. I have written in this way so you can run it without modifying or writing manual installation code.
 
 ```{r}
 #| results = FALSE, warning = FALSE, message = FALSE
@@ -30,9 +29,7 @@ for (package in packages_to_load) library(package, character.only = TRUE)
 
 ### NY Taxis using readr::read_csv
 
-This code shows the standard approach to reading in some data and manipulating.
-This is done with the commonly used functions `readr::read_csv`. As an aside you
-will find `vroom::vroom` and `data.table::fread` are faster.
+This code shows the standard approach to reading in some data and manipulating. This is done with the commonly used functions `readr::read_csv`. As an aside you will find `vroom::vroom` and `data.table::fread` are faster.
 
 ```{r}
 file_taxi <- glue("{here::here()}/data/taxi_trip_data.csv")
@@ -51,13 +48,12 @@ print(taxi_standard)
 
 ### NY Taxis using arrow::read_csv_arrow
 
-This code shows the approach for reading in the same data and manipulating in 
-the same way, but this time we use the arrow package.
-
+This code shows the approach for reading in the same data and manipulating in the same way, but this time we use the arrow package.
 
 ```{r}
 taxi_arrow <- file_taxi |> 
-  read_csv_arrow() |> 
+  # Added as_data_frame = FALSE retrospecitively. Reads in data as an arrow table.
+  read_csv_arrow(as_data_frame = FALSE) |> 
   select(trip_distance, passenger_count, total_amount, pickup_location_id) |> 
   filter(trip_distance >= 5, passenger_count > 1) |> 
   mutate(total_amount = as.numeric(total_amount),
@@ -71,14 +67,15 @@ print(taxi_arrow)
 
 ### NIDS using arrow::read_csv_arrow
 
-This code using arrow for reading a larger dataset, one which wouldn't work on
-my machine with a standard approach.
+This code using arrow for reading a larger dataset, one which wouldn't work on my machine with a standard approach.
 
 ```{r}
+#| eval: false
 file_nids <- glue("{here::here()}/data/NF-UQ-NIDS-v2.csv")
 
 nids <- file_nids |>
-  read_csv_arrow() |>
+  # Added as_data_frame = FALSE retrospecitively. Reads in data as an arrow table.
+  read_csv_arrow(as_data_frame = FALSE) |>
   select(IN_PKTS, IN_BYTES) |>
   mutate(IN_PKTS = as.numeric(IN_PKTS),
          IN_BYTES = as.numeric(IN_BYTES)) |>
