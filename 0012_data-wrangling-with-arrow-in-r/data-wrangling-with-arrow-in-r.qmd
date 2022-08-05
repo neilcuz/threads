@@ -4,7 +4,7 @@ format: gfm
 editor: visual
 ---
 
-\* \* Update 5 Aug 2022 - I have tweaked the code slightly from the original thread, see comments in code below \*
+\* * Update 5 Aug 2022 - I have tweaked the code slightly from the original thread, see comments in code below *
 
 This is the code underpinning the thread Data Wrangling with Arrow in R which you can find [here](https://twitter.com/neilgcurrie/status/1554867200392998912).
 
