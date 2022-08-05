@@ -1,8 +1,8 @@
 Data Wrangling with Arrow in R
 ================
 
-\* \* Update 5 Aug 2022 - I have tweaked the code slightly from the
-original thread, see comments in code below \*
+\* *Update 5 Aug 2022 - I have tweaked the code slightly from the
+original thread, see comments in code below*
 
 This is the code underpinning the thread Data Wrangling with Arrow in R
 which you can find
@@ -89,16 +89,16 @@ print(taxi_arrow)
     # A tibble: 261 × 2
        pickup_location_id mean_amount
                     <int>       <dbl>
-     1                138        17.4
-     2                231        14.3
-     3                158        16.0
-     4                164        17.4
-     5                236        14.3
-     6                132        22.2
-     7                162        16.3
-     8                209        14.5
-     9                 87        14.5
-    10                148        13.9
+     1                164        17.4
+     2                143        16.4
+     3                138        17.4
+     4                141        14.0
+     5                125        16.1
+     6                 90        15.5
+     7                 74        13.8
+     8                100        16.9
+     9                239        15.4
+    10                246        16.1
     # … with 251 more rows
     # ℹ Use `print(n = ...)` to see more rows
 
