@@ -1,0 +1,58 @@
+---
+title: "Parquet Files in R"
+format: gfm
+editor: visual
+---
+
+This is the code underpinning the thread Data Wrangling with Arrow in R which you can find [here]().
+
+### Setup
+
+```{r}
+#| results = FALSE, warning = FALSE, message = FALSE
+
+# Install packages (if not already installed) and load with pacman
+
+if(!("pacman" %in% installed.packages()[,1])) {
+  
+  install.packages("pacman")
+  
+}
+
+packages_to_load <- c("arrow", "ggplot2", "dplyr")
+
+pacman::p_load(packages_to_load, character.only = TRUE)
+```
+
+### Writing a parquet file
+
+Let's take the diamonds dataset from ggplot2 and save it as a parquet file. Parquet files take the .parquet or .pqt file extensions. .parquet is apparently more common.
+
+```{r}
+filename_parquet <- paste0(here::here(), "/data/diamonds.parquet")
+
+write_parquet(diamonds, filename_parquet)
+```
+
+### Read a parquet file
+
+It is easy to read a parquet file into R as a tibble. Its almost the same as what you will be familar with in csv files.
+
+```{r}
+diamonds_tbl <- read_parquet(filename_parquet)
+
+print(diamonds_tbl)
+```
+
+An advantage of the parquet approach though is you dont need to load the whole dataset into memory. You can use dplyr verbs to manipulate and ideally reduce the data before collecting it into memory. This is useful for big datasets so possibly a but overkill here.
+
+```{r}
+diamonds_pqt <- read_parquet(filename_parquet, as_data_frame = FALSE)
+
+diamonds_tbl <- diamonds_pqt |> 
+  select(carat, cut, depth) |> 
+  filter(cut %in% c("Ideal", "Premium"), depth > 59.5) |> 
+  collect()
+ 
+print(diamonds_tbl)
+```

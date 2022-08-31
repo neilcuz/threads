@@ -17,3 +17,5 @@
 **libs
 *derby.log
 *.xlsx
+*.parquet
+*.pqt
