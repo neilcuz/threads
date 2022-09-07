@@ -46,13 +46,10 @@ database. Have a look in your file explorer. Notice the file extension
 ``` r
 database_path <- paste0(here::here(), "/data/taxis.duckdb")
 file.remove(database_path) # incase you run multiple times
+con <- dbConnect(duckdb(), dbdir = database_path)
 ```
 
-    [1] TRUE
-
 ``` r
-con <- dbConnect(duckdb(), dbdir = database_path)
-
 dbListTables(con) # will have no tables
 ```
 
@@ -74,14 +71,25 @@ taxis_path <- paste0(here::here(), "/data/taxi_trip_data.csv")
 query1 <- glue(
   "CREATE TABLE trips AS SELECT * FROM read_csv_auto ('{taxis_path}')"
   )
-
-print(query1)
-
 # Write the csv file to the table in the database
 dbExecute(con, query1)
-
-dbListTables(con) # will have a trips table now
 ```
+
+A closer look at the query
+
+``` r
+print(query1)
+```
+
+    CREATE TABLE trips AS SELECT * FROM read_csv_auto ('/Users/neilcurrie/threads/data/taxi_trip_data.csv')
+
+The database should have a trips table now.
+
+``` r
+dbListTables(con)
+```
+
+    [1] "trips"
 
 ### Querying the database
 
@@ -134,7 +142,7 @@ time2 <- round(Sys.time() - start_time, 2)
 
 For me the DuckDB code runs in 0.14 seconds while the more standard
 approach using the (pretty rapid) vroom package for reading in takes
-4.58 seconds. So the DuckDB query is much faster - obviously there is a
-bit of overhead setting up the connection.
+4.56 seconds. So the DuckDB query is much faster (33x) - though there is
+a bit of overhead setting up the connection.
 
 For bigger data the time savings will be even better.
