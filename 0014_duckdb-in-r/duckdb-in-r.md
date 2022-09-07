@@ -1,0 +1,140 @@
+DuckDB in R
+================
+
+This notebook contains the code underpinning the DuckDB in R thread
+which you can find [here](twitter.com/neilgcurrie)
+
+## Installing DuckDB
+
+Straightforward - no extra tools required, just use install.packages.
+
+``` r
+install.packages("duckdb")
+
+# We will also use these packages if you don't already have them
+
+install.packages("dplyr")  # Data manipulation
+install.packages("DBI")    # Database interface
+install.packages("vroom")  # Read data in fast
+install.packages("here")   # Find local directory
+install.packages("glue")   # Glue together strings - handy for SQL queries
+```
+
+## Example using NYC Taxi Trips
+
+### Setup
+
+Load the libraries we will be using
+
+``` r
+library(dplyr)
+library(duckdb)
+library(DBI)
+library(vroom)
+library(here)
+library(glue)
+library(tictoc)
+```
+
+### Creating a database
+
+We will connect to a database called taxis.duckdb inside the data
+folder. If the database does not exist already it will create a blank
+database. Have a look in your file explorer. Notice the file extension
+.duckdb.
+
+``` r
+database_path <- paste0(here::here(), "/data/taxis.duckdb")
+file.remove(database_path) # incase you run multiple times
+```
+
+    [1] TRUE
+
+``` r
+con <- dbConnect(duckdb(), dbdir = database_path)
+
+dbListTables(con) # will have no tables
+```
+
+    character(0)
+
+Let’s add some data to the database. The data I’ll use is NYC Taxi Trips
+Data from Google on Kaggle in the form of a CSV file which you can find
+[here](https://www.kaggle.com/datasets/neilclack/nyc-taxi-trip-data-google-public-data).
+
+From the DuckDB documentation:
+
+`dbExecute()` is meant for queries where no results are expected
+like `CREATE TABLE` or `UPDATE`etc. and `dbGetQuery()` is meant to be
+used for queries that produce results (e.g. `SELECT`).
+
+``` r
+# Write the SQL to create a table
+taxis_path <- paste0(here::here(), "/data/taxi_trip_data.csv")
+query1 <- glue(
+  "CREATE TABLE trips AS SELECT * FROM read_csv_auto ('{taxis_path}')"
+  )
+
+print(query1)
+
+# Write the csv file to the table in the database
+dbExecute(con, query1)
+
+dbListTables(con) # will have a trips table now
+```
+
+### Querying the database
+
+Now we have create the table we can query it. We don’t need to use SQL
+now (though you still can if you like). We can use dplyr to query.
+Remember to collect at the end though!
+
+We will select and filter columns then calculate average fare by payment
+type.
+
+``` r
+start_time <- Sys.time() # time the code
+
+fare_summary1 <- con |> 
+  tbl("trips") |> 
+  select(payment_type, fare_amount, passenger_count, trip_distance) |> 
+  filter(passenger_count >= 4, trip_distance > 18) |> 
+  group_by(payment_type) |> 
+  summarise(average_fare = mean(fare_amount, na.rm = TRUE)) |> 
+  collect()
+
+time1 <- round(Sys.time() - start_time, 2)
+
+print(fare_summary1)
+```
+
+    # A tibble: 4 × 2
+      payment_type average_fare
+             <int>        <dbl>
+    1            1         63.3
+    2            2         59.6
+    3            3         64.0
+    4            4         65.2
+
+### Speed comparison
+
+``` r
+# Time a more standard approach (using vroom to read in the data)
+start_time <- Sys.time()
+
+fare_summary2 <- taxis_path |> 
+  vroom() |> 
+  select(payment_type, fare_amount, passenger_count, trip_distance) |> 
+  filter(passenger_count >= 4, trip_distance > 18) |> 
+  group_by(payment_type) |> 
+  summarise(average_fare = mean(fare_amount, na.rm = TRUE))
+
+time2 <- round(Sys.time() - start_time, 2)
+```
+
+For me the DuckDB code runs in 0.14 seconds while the more standard
+approach using the (pretty rapid) vroom package for reading in takes
+4.58 seconds. So the DuckDB query is much faster - obviously there is a
+bit of overhead setting up the connection.
+
+For bigger data the time savings will be even better.

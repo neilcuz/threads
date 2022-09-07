@@ -18,3 +18,4 @@
 *.xlsx
 *.parquet
 *.pqt
+*.duckdb
