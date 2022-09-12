@@ -38,7 +38,9 @@ use_testthat()
 
 ## Unit Testing Example
 
-The corresponding test file `test-sse.R` can be found [here]().
+The corresponding test file `test-sse.R` (and all the test files we will
+use) can be found
+[here](https://github.com/neilcuz/threads/tree/master/tests/testthat).
 
 ``` r
 sse <- function (actual, predicted) {
@@ -321,5 +323,3 @@ test_dir(wd$testthat)
 
     ══ Results ═════════════════════════════════════════════════════════════════════
     [ FAIL 0 | WARN 0 | SKIP 0 | PASS 22 ]
-
-    Nice code.
