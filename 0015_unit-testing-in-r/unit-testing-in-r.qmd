@@ -1,0 +1,186 @@
+---
+title: "Unit Testing in R"
+format: gfm
+editor: visual
+---
+
+This notebook contains the code underpinning the Unit Testing in R thread. You can find links to all my threads [here](twitter.com/neilgcurrie).
+
+## Setup
+
+First install the following packages.
+
+```{r}
+#| eval: false
+install.packages("testthat")
+install.packages("usethis")
+install.packages("here")
+```
+And load them. 
+
+```{r}
+#| output: false
+library(testthat)
+library(usethis)
+library(here)
+```
+
+Now for initial setup of your tests use the `use_testthat` function from the `testthat` package. This will create a `tests` folder which contains a folder `tests/testhat/` where your tests will live and a file `testthat.R` which will organise things for you. You only need to run `use_testthat` once.
+
+```{r}
+use_testthat()
+```
+
+## Unit Testing Example
+
+The corresponding test file `test-sse.R` can be found [here]().
+
+```{r}
+sse <- function (actual, predicted) {
+  
+  sum((actual - predicted) ^ 2)
+  
+}
+```
+
+To run the tests inside `test-sse.R` I can use the `test_file` function or if you open the file in R Studio you can press the Run Tests button.
+
+```{r}
+# I like to store folder and file names in lists
+wd <- list()
+
+wd$wd <- paste0(here(), "/")
+wd$testthat <- paste0(wd$wd, "tests/testthat/")
+
+files <- list()
+
+files$test_sse <- paste0(wd$testthat, "test-sse.r")
+
+# Run the test
+test_file(files$test_sse)
+```
+Now we want to write a new function `mape` and an `error` function which calls the `sse` or `mape` functions depending on what method the user asks for.
+
+```{r}
+
+mape <- function (actual, predicted) {
+  
+  sum(abs((actual - predicted) / actual)) / length (actual)
+  
+}
+
+error <- function (actual, predicted, method) {
+  
+  if (method == "sse") {
+    
+    return(sse(actual, -predicted))
+    
+  }
+  
+  if (method == "mape") {
+    
+    return(mape(actual, predicted))
+    
+  }
+  
+  stop ("bad method supplied")
+
+}
+```
+
+Now we can test those functions.
+
+```{r}
+files$test_mape <- paste0(wd$testthat, "test-mape.r")
+files$test_error <- paste0(wd$testthat, "test-error.r")
+
+test_file(files$test_mape)
+test_file(files$test_error)
+```
+So there was an mistake in the `error` function - I was accidently using `-predicted` when calling the `sse` function. We will fix and re-run.
+
+```{r}
+error <- function (actual, predicted, method) {
+  
+  if (method == "sse") {
+    
+    return(sse(actual, predicted))
+    
+  }
+  
+  if (method == "mape") {
+    
+    return(mape(actual, predicted))
+    
+  }
+  
+  stop ("bad method supplied")
+
+}
+
+test_file(files$test_error)
+```
+Now we want to do some development of the `mape` function so it returns a percentage or decimal depending on what output type the user asks for.
+
+```{r}
+mape <- function (actual, predicted, output = "decimal") {
+  
+  value <- 100 * sum(abs((actual - predicted) / actual)) / length (actual)
+  
+  if (output == "percent") {
+    
+    return(value * 100)
+    
+  }
+    
+  if (output == "decimal") {
+    
+    return(value)
+    
+  }
+    
+  stop ("bad output supplied")
+  
+}
+
+# In practice you would have a single mape test file
+
+files$test_mape2 <- paste0(wd$testthat, "test-mape2.r")
+test_file(files$test_mape2)
+```
+
+Now let's fix that error - I multipled by 100 in multiple places.
+
+```{r}
+mape <- function (actual, predicted, output = "decimal") {
+  
+  value <- sum(abs((actual - predicted) / actual)) / length (actual)
+  
+  if (output == "percent") {
+    
+    return(value * 100)
+    
+  }
+    
+  if (output == "decimal") {
+    
+    return(value)
+    
+  }
+    
+  stop ("bad output supplied")
+  
+}
+
+# In practice you would have a single mape test file
+
+files$test_mape2 <- paste0(wd$testthat, "test-mape2.r")
+test_file(files$test_mape2)
+```
+## Running all your tests
+
+Running your tests one a time is good when developing those functions but you will often want to run all your tests to check everything is passing.
+
+```{r}
+test_dir(wd$testthat)
+```

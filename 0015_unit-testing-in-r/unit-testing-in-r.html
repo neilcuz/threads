@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.189">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Unit Testing in R</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="unit-testing-in-r_files/libs/clipboard/clipboard.min.js"></script>
+<script src="unit-testing-in-r_files/libs/quarto-html/quarto.js"></script>
+<script src="unit-testing-in-r_files/libs/quarto-html/popper.min.js"></script>
+<script src="unit-testing-in-r_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="unit-testing-in-r_files/libs/quarto-html/anchor.min.js"></script>
+<link href="unit-testing-in-r_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="unit-testing-in-r_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="unit-testing-in-r_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="unit-testing-in-r_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="unit-testing-in-r_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Unit Testing in R</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<p>This notebook contains the code underpinning the Unit Testing in R thread. You can find links to all my threads <a href="twitter.com/neilgcurrie">here</a>.</p>
+<section id="setup" class="level2">
+<h2 class="anchored" data-anchor-id="setup">Setup</h2>
+<p>First install the following packages.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"testthat"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"usethis"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"here"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And load them.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(testthat)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(usethis)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now for initial setup of your tests use the <code>use_testthat</code> function from the <code>testthat</code> package. This will create a <code>tests</code> folder which contains a folder <code>tests/testhat/</code> where your tests will live and a file <code>testthat.R</code> which will organise things for you. You only need to run <code>use_testthat</code> once.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">use_testthat</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ Setting active project to '/Users/neilcurrie/threads'
+• Call `use_test()` to initialize a basic test file and open it for editing.</code></pre>
+</div>
+</div>
+</section>
+<section id="unit-testing-example" class="level2">
+<h2 class="anchored" data-anchor-id="unit-testing-example">Unit Testing Example</h2>
+<p>The corresponding test file <code>test-sse.R</code> can be found <a href="">here</a>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>sse <span class="ot">&lt;-</span> <span class="cf">function</span> (actual, predicted) {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sum</span>((actual <span class="sc">-</span> predicted) <span class="sc">^</span> <span class="dv">2</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>To run the tests inside <code>test-sse.R</code> I can use the <code>test_file</code> function or if you open the file in R Studio you can press the Run Tests button.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># I like to store folder and file names in lists</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>wd <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>wd<span class="sc">$</span>wd <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="fu">here</span>(), <span class="st">"/"</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>wd<span class="sc">$</span>testthat <span class="ot">&lt;-</span> <span class="fu">paste0</span>(wd<span class="sc">$</span>wd, <span class="st">"tests/testthat/"</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>files <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>files<span class="sc">$</span>test_sse <span class="ot">&lt;-</span> <span class="fu">paste0</span>(wd<span class="sc">$</span>testthat, <span class="st">"test-sse.r"</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the test</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="fu">test_file</span>(files<span class="sc">$</span>test_sse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+══ Testing test-sse.r ══════════════════════════════════════════════════════════
+
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 0 ]
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 1 ]
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 2 ]
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 3 ]
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 4 ] Done!</code></pre>
+</div>
+</div>
+<p>Now we want to write a new function <code>mape</code> and an <code>error</code> function which calls the <code>sse</code> or <code>mape</code> functions depending on what method the user asks for.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>mape <span class="ot">&lt;-</span> <span class="cf">function</span> (actual, predicted) {</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sum</span>(<span class="fu">abs</span>((actual <span class="sc">-</span> predicted) <span class="sc">/</span> actual)) <span class="sc">/</span> <span class="fu">length</span> (actual)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>error <span class="ot">&lt;-</span> <span class="cf">function</span> (actual, predicted, method) {</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (method <span class="sc">==</span> <span class="st">"sse"</span>) {</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">sse</span>(actual, <span class="sc">-</span>predicted))</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (method <span class="sc">==</span> <span class="st">"mape"</span>) {</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">mape</span>(actual, predicted))</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stop</span> (<span class="st">"bad method supplied"</span>)</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we can test those functions.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>files<span class="sc">$</span>test_mape <span class="ot">&lt;-</span> <span class="fu">paste0</span>(wd<span class="sc">$</span>testthat, <span class="st">"test-mape.r"</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>files<span class="sc">$</span>test_error <span class="ot">&lt;-</span> <span class="fu">paste0</span>(wd<span class="sc">$</span>testthat, <span class="st">"test-error.r"</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">test_file</span>(files<span class="sc">$</span>test_mape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+══ Testing test-mape.r ═════════════════════════════════════════════════════════
+
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 0 ]
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 1 ]
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 2 ]
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 3 ]
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 4 ] Done!</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">test_file</span>(files<span class="sc">$</span>test_error)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+══ Testing test-error.r ════════════════════════════════════════════════════════
+
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 0 ]
+[ FAIL 1 | WARN 0 | SKIP 0 | PASS 0 ]
+[ FAIL 2 | WARN 0 | SKIP 0 | PASS 0 ]
+[ FAIL 2 | WARN 0 | SKIP 0 | PASS 1 ]
+[ FAIL 2 | WARN 0 | SKIP 0 | PASS 2 ]
+[ FAIL 2 | WARN 0 | SKIP 0 | PASS 3 ]
+[ FAIL 2 | WARN 0 | SKIP 0 | PASS 4 ]
+[ FAIL 2 | WARN 0 | SKIP 0 | PASS 5 ]
+[ FAIL 2 | WARN 0 | SKIP 0 | PASS 6 ]
+
+── Failure (]8;line=4:col=3;file:///Users/neilcurrie/threads/tests/testthat/test-error.rtest-error.r:4:3]8;;): sse calculations work ───────────────────────────
+error(4, 2, method = "sse") not equal to sse(4, 2).
+1/1 mismatches
+[1] 36 - 4 == 32
+
+── Failure (]8;line=6:col=3;file:///Users/neilcurrie/threads/tests/testthat/test-error.rtest-error.r:6:3]8;;): sse calculations work ───────────────────────────
+error(c(1, 2, 3), c(2, 3, 4), method = "sse") not equal to sse(c(1, 2, 3), c(2, 3, 4)).
+1/1 mismatches
+[1] 83 - 3 == 80
+
+
+[ FAIL 2 | WARN 0 | SKIP 0 | PASS 6 ]</code></pre>
+</div>
+</div>
+<p>So there was an mistake in the <code>error</code> function - I was accidently using <code>-predicted</code> when calling the <code>sse</code> function. We will fix and re-run.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>error <span class="ot">&lt;-</span> <span class="cf">function</span> (actual, predicted, method) {</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (method <span class="sc">==</span> <span class="st">"sse"</span>) {</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">sse</span>(actual, predicted))</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (method <span class="sc">==</span> <span class="st">"mape"</span>) {</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">mape</span>(actual, predicted))</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stop</span> (<span class="st">"bad method supplied"</span>)</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="fu">test_file</span>(files<span class="sc">$</span>test_error)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+══ Testing test-error.r ════════════════════════════════════════════════════════
+
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 0 ]
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 1 ]
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 2 ]
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 3 ]
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 4 ]
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 5 ]
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 6 ]
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 7 ]
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 8 ] Done!</code></pre>
+</div>
+</div>
+<p>Now we want to do some development of the <code>mape</code> function so it returns a percentage or decimal depending on what output type the user asks for.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>mape <span class="ot">&lt;-</span> <span class="cf">function</span> (actual, predicted, <span class="at">output =</span> <span class="st">"decimal"</span>) {</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  value <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="sc">*</span> <span class="fu">sum</span>(<span class="fu">abs</span>((actual <span class="sc">-</span> predicted) <span class="sc">/</span> actual)) <span class="sc">/</span> <span class="fu">length</span> (actual)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (output <span class="sc">==</span> <span class="st">"percent"</span>) {</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(value <span class="sc">*</span> <span class="dv">100</span>)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (output <span class="sc">==</span> <span class="st">"decimal"</span>) {</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(value)</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stop</span> (<span class="st">"bad output supplied"</span>)</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="co"># In practice you would have a single mape test file</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>files<span class="sc">$</span>test_mape2 <span class="ot">&lt;-</span> <span class="fu">paste0</span>(wd<span class="sc">$</span>testthat, <span class="st">"test-mape2.r"</span>)</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a><span class="fu">test_file</span>(files<span class="sc">$</span>test_mape2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+══ Testing test-mape2.r ════════════════════════════════════════════════════════
+
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 0 ]
+[ FAIL 1 | WARN 0 | SKIP 0 | PASS 0 ]
+[ FAIL 2 | WARN 0 | SKIP 0 | PASS 0 ]
+[ FAIL 3 | WARN 0 | SKIP 0 | PASS 0 ]
+[ FAIL 4 | WARN 0 | SKIP 0 | PASS 0 ]
+[ FAIL 4 | WARN 0 | SKIP 0 | PASS 1 ]
+[ FAIL 4 | WARN 0 | SKIP 0 | PASS 2 ]
+
+── Failure (]8;line=3:col=3;file:///Users/neilcurrie/threads/tests/testthat/test-mape2.rtest-mape2.r:3:3]8;;): basic calculations work ─────────────────────────
+mape(20, 15, output = "decimal") not equal to 0.25.
+1/1 mismatches
+[1] 25 - 0.25 == 24.8
+
+── Failure (]8;line=4:col=3;file:///Users/neilcurrie/threads/tests/testthat/test-mape2.rtest-mape2.r:4:3]8;;): basic calculations work ─────────────────────────
+mape(c(15, 10, 15), c(20, 5, 25), output = "decimal") not equal to 0.5.
+1/1 mismatches
+[1] 50 - 0.5 == 49.5
+
+── Failure (]8;line=5:col=3;file:///Users/neilcurrie/threads/tests/testthat/test-mape2.rtest-mape2.r:5:3]8;;): basic calculations work ─────────────────────────
+mape(20, 15, output = "percent") not equal to 25.
+1/1 mismatches
+[1] 2500 - 25 == 2475
+
+── Failure (]8;line=6:col=3;file:///Users/neilcurrie/threads/tests/testthat/test-mape2.rtest-mape2.r:6:3]8;;): basic calculations work ─────────────────────────
+mape(c(15, 10, 15), c(20, 5, 25), output = "percent") not equal to 50.
+1/1 mismatches
+[1] 5000 - 50 == 4950
+
+
+[ FAIL 4 | WARN 0 | SKIP 0 | PASS 2 ]</code></pre>
+</div>
+</div>
+<p>Now let’s fix that error - I multipled by 100 in multiple places.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>mape <span class="ot">&lt;-</span> <span class="cf">function</span> (actual, predicted, <span class="at">output =</span> <span class="st">"decimal"</span>) {</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  value <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">abs</span>((actual <span class="sc">-</span> predicted) <span class="sc">/</span> actual)) <span class="sc">/</span> <span class="fu">length</span> (actual)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (output <span class="sc">==</span> <span class="st">"percent"</span>) {</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(value <span class="sc">*</span> <span class="dv">100</span>)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (output <span class="sc">==</span> <span class="st">"decimal"</span>) {</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(value)</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stop</span> (<span class="st">"bad output supplied"</span>)</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a><span class="co"># In practice you would have a single mape test file</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>files<span class="sc">$</span>test_mape2 <span class="ot">&lt;-</span> <span class="fu">paste0</span>(wd<span class="sc">$</span>testthat, <span class="st">"test-mape2.r"</span>)</span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a><span class="fu">test_file</span>(files<span class="sc">$</span>test_mape2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+══ Testing test-mape2.r ════════════════════════════════════════════════════════
+
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 0 ]
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 1 ]
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 2 ]
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 3 ]
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 4 ]
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 5 ]
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 6 ] Done!</code></pre>
+</div>
+</div>
+</section>
+<section id="running-all-your-tests" class="level2">
+<h2 class="anchored" data-anchor-id="running-all-your-tests">Running all your tests</h2>
+<p>Running your tests one a time is good when developing those functions but you will often want to run all your tests to check everything is passing.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">test_dir</span>(wd<span class="sc">$</span>testthat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>✔ | F W S  OK | Context
+
+⠏ |         0 | error                                                           
+✔ |         8 | error
+
+⠏ |         0 | mape                                                            
+✔ |         4 | mape
+
+⠏ |         0 | mape2                                                           
+✔ |         6 | mape2
+
+⠏ |         0 | sse                                                             
+✔ |         4 | sse
+
+══ Results ═════════════════════════════════════════════════════════════════════
+[ FAIL 0 | WARN 0 | SKIP 0 | PASS 22 ]</code></pre>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
