@@ -62,7 +62,6 @@ test_file(files$test_sse)
 Now we want to write a new function `mape` and an `error` function which calls the `sse` or `mape` functions depending on what method the user asks for.
 
 ```{r}
-
 mape <- function (actual, predicted) {
   
   sum(abs((actual - predicted) / actual)) / length (actual)
