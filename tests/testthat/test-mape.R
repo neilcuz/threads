@@ -10,6 +10,6 @@ test_that("basic calculations work", {
 test_that("numbers passed as text gives an error", {
   
   expect_error(sse("20", 15))
-  expect_error(see(20, "15"))
+  expect_error(sse(20, "15"))
   
 })
