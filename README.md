@@ -11,6 +11,7 @@ The code for each topic can be found in the above repositories, numbered by ID. 
 
 |ID|Title|Description|Link to Thread|Link to Code|
 |:---|:-----|:--------|:---|:---|
+|0017|Documenting code in R|How to document your code, including packages with roxygen2|Thread not live|Go to code|
 |0016|Creating a package in R|Steps on how to organise your analysis as a package|[Go to Thread](https://twitter.com/neilgcurrie/status/1572254358397681665)|No code thread only|
 |0015|Unit testing in R|How to write unit tests in R|[Go to Thread](https://twitter.com/neilgcurrie/status/1569717576112181250)|[Go to Code](https://github.com/neilcuz/threads/blob/master/0015_unit-testing-in-r/unit-testing-in-r.md)|
 |0014|DuckDB in R|An intro to using DuckDB with R|[Go to Thread](https://twitter.com/neilgcurrie/status/1567543254668955653)|[Go to Code](https://github.com/neilcuz/threads/blob/master/0014_duckdb-in-r/duckdb-in-r.md)|

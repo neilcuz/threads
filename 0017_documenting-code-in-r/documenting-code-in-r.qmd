@@ -1,0 +1,68 @@
+---
+title: "Documenting code in R"
+format: gfm
+editor: visual
+---
+
+This notebook contains the code underpinning the Documenting Code in R thread. You can find links to all my threads [here](twitter.com/neilgcurrie).
+
+## Setup
+
+When writing comments, focus on the why.
+
+```{r}
+#| eval: false
+# Bad ---
+
+# Multiply dollars by exchange rate to get pounds value
+
+sales_pounds <- sales_dollars * exchange_rate_pounds_to_dollars
+
+# Good ---
+
+# We are a UK based business but some of our transactions take place in pounds. 
+# All financials must be reported in pounds.
+
+sales_pounds <- sales_dollars * exchange_rate_pounds_to_dollars
+```
+
+```{r}
+#| eval: false
+# Bad---
+# x are the actual values
+# y are the predicted values
+# z is the sum of squares error
+
+z <- sum((x - y) ^ 2)
+
+# Good ---
+
+sum_of_squares_error <- function (actual, predicted) {
+  
+   sum((actual - predicted) ^ 2)
+  
+}
+
+error <- sum_of_squares_error(actual, predicted)
+```
+
+```{r}
+#' @title My Dummy Function
+#' @description A fake dummy function for explaining roxygen2
+#' @param x a numeric vector, the main input to my dummy function
+#' @param xmax,xmin the maximum and minimum value that x can take
+#' @returns a numeric vector
+#' @details more detail about the returned value would go in here
+#' @examples 
+#' x <- runif(100)
+#' xmax <- 0.8
+#' xmin <- 0.2
+#' 
+#' my_dummy_function(x, xmax, xmin)
+
+my_dummy_function <- function (x, xmax, xmin) {
+  
+  x[x < xmax & x > xmin]
+  
+}
+```
