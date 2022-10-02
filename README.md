@@ -1,6 +1,6 @@
 # Threads Repository
 
-Grow your business with data-driven decision making at [torchdata.io](https:://www.torchdata.io).
+Grow your business with data-driven decision making at [torchdata.io](https://www.torchdata.io).
 
 ## Overview
 
