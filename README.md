@@ -2,7 +2,7 @@
 
 ## Overview
 
-Hi, I'm Neil, a freelance data professional and founder of Torch Data ([torchdata.io](https://www.torchdata.io)).
+Hi, I'm Neil, a freelance data professional and founder of Torch Data [torchdata.io](https://www.torchdata.io).
 
 This repository contains code from various R themed threads I have posted on my twitter [@neilgcurrie](https://twitter.com/neilgcurrie). 
 
