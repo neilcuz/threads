@@ -1,8 +1,8 @@
 # Threads Repository
 
-Data science consultancy and R training at [torchdata.io](https://www.torchdata.io).
-
 ## Overview
+
+Hi, I'm Neil, a freelance data professional and founder of Torch Data ([torchdata.io](https://www.torchdata.io)).
 
 This repository contains code from various R themed threads I have posted on my twitter [@neilgcurrie](https://twitter.com/neilgcurrie). 
 
@@ -12,6 +12,7 @@ The code for each topic can be found in the above repositories, numbered by ID. 
 
 | ID| Title| Description|Link to Thread|Link to Code|
 |:--------------|:--------------|:--------------|:--------------|:--------------|
+|0018|Dependency management with renv|Reproducible package version management with renv|Thread not Live|[Go to code](https://github.com/neilcuz/threads/blob/master/0018_dependency-management-with-renv/dependency-management-with-renv.md)|
 | 0017|Documenting code in R|How to document your code, including packages with roxygen2|[Go to Thread](https://twitter.com/neilgcurrie/status/1574791025310121985)|[Go to code](https://github.com/neilcuz/threads/blob/master/0017_documenting-code-in-r/documenting-code-in-r.md)|
 | 0016 | Creating a package in R        | Steps on how to organise your analysis as a package                                            | [Go to Thread](https://twitter.com/neilgcurrie/status/1572254358397681665) | No code thread only                                                                                                                |
 | 0015 | Unit testing in R              | How to write unit tests in R                                                                   | [Go to Thread](https://twitter.com/neilgcurrie/status/1569717576112181250) | [Go to Code](https://github.com/neilcuz/threads/blob/master/0015_unit-testing-in-r/unit-testing-in-r.md)                           |
