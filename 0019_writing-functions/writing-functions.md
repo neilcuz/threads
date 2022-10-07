@@ -111,8 +111,10 @@ transform_data1 <- function(x, min_value, filter_by, sort_by) {
 ```
 
 ``` r
-transform_data1(dummy, 0.5, j, k)
+transform_data1(dummy, 0.5, j, k) # error!
 ```
+
+This will work. And an example of using :=
 
 ``` r
 # Will work with the curly brackets
@@ -128,20 +130,19 @@ transform_data2 <- function(x, min_value, filter_by, sort_by) {
 transform_data2(dummy, 0.5, j, k)
 ```
 
-    # A tibble: 11 × 4
-          id      i     j      k
-       <int>  <dbl> <dbl>  <dbl>
-     1    17 0.340  0.650 0.0117
-     2    10 0.787  0.591 0.119 
-     3    15 0.893  0.528 0.145 
-     4    20 0.824  0.845 0.278 
-     5    19 0.0936 0.827 0.308 
-     6     8 0.787  0.881 0.456 
-     7     5 0.842  0.517 0.611 
-     8     7 0.623  0.585 0.685 
-     9     1 0.384  0.750 0.770 
-    10     6 0.874  0.821 0.775 
-    11    16 0.854  0.655 0.968 
+    # A tibble: 10 × 4
+          id     i     j      k
+       <int> <dbl> <dbl>  <dbl>
+     1     5 0.978 0.694 0.0390
+     2     6 0.437 0.511 0.151 
+     3     8 0.685 0.581 0.397 
+     4     3 0.542 0.784 0.518 
+     5    17 0.697 0.797 0.536 
+     6    12 0.731 0.630 0.552 
+     7    11 0.945 0.941 0.661 
+     8     1 0.424 0.752 0.752 
+     9     2 0.683 0.587 0.814 
+    10    16 0.984 0.839 0.870 
 
 ``` r
 # Using := to modify the left hand side or name
@@ -160,19 +161,19 @@ transform_data3(dummy, 0.5, i, k, "l")
 ```
 
     # A tibble: 11 × 5
-          id     i      j     k      l
-       <int> <dbl>  <dbl> <dbl>  <dbl>
-     1    10 0.787 0.591  0.119 0.0934
-     2    15 0.893 0.528  0.145 0.130 
-     3    20 0.824 0.845  0.278 0.229 
-     4    12 0.611 0.0438 0.413 0.253 
-     5     2 0.733 0.235  0.416 0.305 
-     6     8 0.787 0.881  0.456 0.359 
-     7     5 0.842 0.517  0.611 0.515 
-     8     7 0.623 0.585  0.685 0.427 
-     9     6 0.874 0.821  0.775 0.677 
-    10    18 0.897 0.0818 0.949 0.852 
-    11    16 0.854 0.655  0.968 0.827 
+          id     i      j      k      l
+       <int> <dbl>  <dbl>  <dbl>  <dbl>
+     1     5 0.978 0.694  0.0390 0.0382
+     2     9 0.897 0.310  0.157  0.141 
+     3     8 0.685 0.581  0.397  0.272 
+     4     3 0.542 0.784  0.518  0.281 
+     5    17 0.697 0.797  0.536  0.374 
+     6    12 0.731 0.630  0.552  0.403 
+     7    11 0.945 0.941  0.661  0.625 
+     8     7 0.637 0.138  0.681  0.434 
+     9    18 0.729 0.0265 0.722  0.527 
+    10     2 0.683 0.587  0.814  0.556 
+    11    16 0.984 0.839  0.870  0.856 
 
 ## Error handling for arguments
 
@@ -217,11 +218,12 @@ calculate_c <- function (side_a, side_b, squared = FALSE) {
 }
 ```
 
+## Using ellipsis
+
 ``` r
 # Maybe you want to use some of the aesthetics for tweaking geom_point.
 # Maybe you arent sure which ones, all you know is you will be doing a bunch
 # of scatter plots of i and j.
-
 
 ggplot(dummy, aes(x = i, y= j)) +
   geom_point(size = 5, shape = 14) +

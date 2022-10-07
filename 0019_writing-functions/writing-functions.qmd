@@ -119,9 +119,9 @@ transform_data1 <- function(x, min_value, filter_by, sort_by) {
 
 ```{r}
 #| eval: false
-transform_data1(dummy, 0.5, j, k)
+transform_data1(dummy, 0.5, j, k) # error!
 ```
-
+This will work. And an example of using :=
 
 ```{r}
 # Will work with the curly brackets
@@ -196,13 +196,12 @@ calculate_c <- function (side_a, side_b, squared = FALSE) {
 
 ```
 
+## Using ellipsis
 
 ```{r}
-
 # Maybe you want to use some of the aesthetics for tweaking geom_point.
 # Maybe you arent sure which ones, all you know is you will be doing a bunch
 # of scatter plots of i and j.
-
 
 ggplot(dummy, aes(x = i, y= j)) +
   geom_point(size = 5, shape = 14) +
