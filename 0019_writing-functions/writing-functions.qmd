@@ -235,7 +235,7 @@ plotter2 <- function (plot_data, ..., title = "Placeholder title") {
   
 }
 
-plotter(dummy, size = 3, shape = 4, stroke = 5)
+plotter2(dummy, size = 3, shape = 4, stroke = 5)
 
 ```
 
