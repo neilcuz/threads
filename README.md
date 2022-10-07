@@ -12,7 +12,7 @@ The code for each topic can be found in the above repositories, numbered by ID. 
 
 | ID| Title| Description|Link to Thread|Link to Code|
 |:--------------|:--------------|:--------------|:--------------|:--------------|
-|0019|Writing functions|When and how to write great functions in R|Thread not live|Code not live|
+|0019|Writing functions|When and how to write great functions in R|[Go to Thread](https://twitter.com/neilgcurrie/status/1578414872261378049)|[Go to Code](https://github.com/neilcuz/threads/blob/master/0019_writing-functions/writing-functions.md)|
 |0018|Dependency management with renv|Reproducible package version management with renv|[Go to Thread](https://twitter.com/neilgcurrie/status/1576965381532528642)|[Go to code](https://github.com/neilcuz/threads/blob/master/0018_dependency-management-with-renv/dependency-management-with-renv.md)|
 | 0017|Documenting code in R|How to document your code, including packages with roxygen2|[Go to Thread](https://twitter.com/neilgcurrie/status/1574791025310121985)|[Go to code](https://github.com/neilcuz/threads/blob/master/0017_documenting-code-in-r/documenting-code-in-r.md)|
 | 0016 | Creating a package in R        | Steps on how to organise your analysis as a package                                            | [Go to Thread](https://twitter.com/neilgcurrie/status/1572254358397681665) | No code thread only                                                                                                                |
