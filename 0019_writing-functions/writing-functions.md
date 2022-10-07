@@ -17,6 +17,9 @@ Install the packages if you need to.
 ``` r
 install.packages("dplyr")
 install.packages("ggplot2")
+install.packages("purrr")
+install.packages("readr")
+install.packages("here")
 ```
 
 And load them.
@@ -24,6 +27,9 @@ And load them.
 ``` r
 library(dplyr)
 library(ggplot2)
+library(purrr)
+library(readr)
+library(here)
 ```
 
 ## When to write functions
@@ -130,23 +136,19 @@ transform_data2 <- function(x, min_value, filter_by, sort_by) {
 transform_data2(dummy, 0.5, j, k)
 ```
 
-    # A tibble: 14 × 4
-          id       i     j      k
-       <int>   <dbl> <dbl>  <dbl>
-     1     7 0.126   0.691 0.0170
-     2     4 0.578   0.587 0.199 
-     3    19 0.187   0.994 0.266 
-     4     5 0.186   0.913 0.291 
-     5    10 0.132   0.528 0.486 
-     6     3 0.673   0.777 0.624 
-     7    16 0.00179 0.946 0.625 
-     8    13 0.854   0.768 0.637 
-     9     6 0.0176  0.520 0.695 
-    10     1 0.892   0.946 0.821 
-    11     9 0.0483  0.654 0.872 
-    12     8 0.00406 0.996 0.901 
-    13    20 0.305   0.564 0.912 
-    14    11 0.0732  0.833 0.957 
+    # A tibble: 10 × 4
+          id      i     j     k
+       <int>  <dbl> <dbl> <dbl>
+     1     2 0.324  0.810 0.292
+     2    16 0.716  0.864 0.368
+     3    18 0.883  0.940 0.545
+     4    11 0.540  0.697 0.830
+     5     4 0.638  0.694 0.846
+     6     5 0.453  0.939 0.865
+     7     9 0.983  0.921 0.878
+     8     1 0.272  0.812 0.897
+     9    19 0.0395 0.542 0.899
+    10    10 0.239  0.817 0.985
 
 ``` r
 # Using := to modify the left hand side or name
@@ -164,15 +166,20 @@ transform_data3 <- function(x, min_value, filter_by, sort_by, new_name) {
 transform_data3(dummy, 0.5, i, k, "l")
 ```
 
-    # A tibble: 6 × 5
-         id     i     j     k     l
-      <int> <dbl> <dbl> <dbl> <dbl>
-    1     4 0.578 0.587 0.199 0.115
-    2    18 0.893 0.478 0.323 0.288
-    3     3 0.673 0.777 0.624 0.420
-    4    13 0.854 0.768 0.637 0.544
-    5     1 0.892 0.946 0.821 0.733
-    6    17 0.707 0.370 0.831 0.588
+    # A tibble: 11 × 5
+          id     i      j       k       l
+       <int> <dbl>  <dbl>   <dbl>   <dbl>
+     1    12 0.894 0.120  0.00567 0.00507
+     2    13 0.578 0.282  0.231   0.133  
+     3     6 0.666 0.244  0.256   0.171  
+     4    17 0.973 0.325  0.295   0.287  
+     5    16 0.716 0.864  0.368   0.263  
+     6    18 0.883 0.940  0.545   0.481  
+     7    20 0.639 0.0240 0.605   0.386  
+     8    11 0.540 0.697  0.830   0.448  
+     9     4 0.638 0.694  0.846   0.540  
+    10     9 0.983 0.921  0.878   0.863  
+    11     7 0.825 0.147  0.933   0.770  
 
 ## Error handling for arguments
 
@@ -247,45 +254,24 @@ plotter(dummy, alpha = 0.5, shape = 10, stroke = 10)
 
 ## Functions written for their side effects
 
-Let’s jut use the plotter function from the last example. Return the
-first argument unmodified and invisibly.
+Let’s say we want to save a bunch of files to a folder called output
 
 ``` r
-plotter2 <- function (plot_data, ..., title = "Placeholder title") {
+sample_and_write <- function (sizes) {
   
-  ggplot(plot_data, aes(x = i, y = j)) +
-    geom_point(...) +
-    labs(title = title)
+  output_path <- file.path(here(), "output")
+  if (!dir.exists(output_path)) dir.create("output")
   
-  return(invisible(plot_data))
+  samples <- map(sizes, sampler)
+  
+  files <- file.path(output_path, paste0("sample", sizes, ".rds"))
+  
+  walk2(samples, files, write_rds)
+  
+  return(invisible(sizes))
   
 }
 
-p <- plotter2(dummy, size = 3, shape = 4, stroke = 5)
-
-print(p)
+sample_and_write(1:5)
+sample_and_write(30:32)
 ```
-
-    # A tibble: 20 × 4
-          id       i     j      k
-       <int>   <dbl> <dbl>  <dbl>
-     1     1 0.892   0.946 0.821 
-     2     2 0.0871  0.434 0.844 
-     3     3 0.673   0.777 0.624 
-     4     4 0.578   0.587 0.199 
-     5     5 0.186   0.913 0.291 
-     6     6 0.0176  0.520 0.695 
-     7     7 0.126   0.691 0.0170
-     8     8 0.00406 0.996 0.901 
-     9     9 0.0483  0.654 0.872 
-    10    10 0.132   0.528 0.486 
-    11    11 0.0732  0.833 0.957 
-    12    12 0.486   0.218 0.535 
-    13    13 0.854   0.768 0.637 
-    14    14 0.377   0.114 0.298 
-    15    15 0.0505  0.229 0.110 
-    16    16 0.00179 0.946 0.625 
-    17    17 0.707   0.370 0.831 
-    18    18 0.893   0.478 0.323 
-    19    19 0.187   0.994 0.266 
-    20    20 0.305   0.564 0.912 

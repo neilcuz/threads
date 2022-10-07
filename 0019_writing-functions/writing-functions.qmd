@@ -18,6 +18,9 @@ Install the packages if you need to.
 #| eval: false
 install.packages("dplyr")
 install.packages("ggplot2")
+install.packages("purrr")
+install.packages("readr")
+install.packages("here")
 ```
 
 And load them.
@@ -26,6 +29,9 @@ And load them.
 #| output: false
 library(dplyr)
 library(ggplot2)
+library(purrr)
+library(readr)
+library(here)
 ```
 
 
@@ -221,24 +227,27 @@ plotter(dummy, alpha = 0.5, shape = 10, stroke = 10)
 
 ## Functions written for their side effects
 
-Let's jut use the plotter function from the last example. Return the first 
-argument unmodified and invisibly.
+Let's say we want to save a bunch of files to a folder called output
 
 ```{r}
-plotter2 <- function (plot_data, ..., title = "Placeholder title") {
+
+sample_and_write <- function (sizes) {
   
-  ggplot(plot_data, aes(x = i, y = j)) +
-    geom_point(...) +
-    labs(title = title)
+  output_path <- file.path(here(), "output")
+  if (!dir.exists(output_path)) dir.create("output")
   
-  return(invisible(plot_data))
+  samples <- map(sizes, sampler)
+  
+  files <- file.path(output_path, paste0("sample", sizes, ".rds"))
+  
+  walk2(samples, files, write_rds)
+  
+  return(invisible(sizes))
   
 }
 
-p <- plotter2(dummy, size = 3, shape = 4, stroke = 5)
-
-print(p)
-
+sample_and_write(1:5)
+sample_and_write(30:32)
 ```
 
 
