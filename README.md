@@ -11,7 +11,7 @@ This repository contains code from various R themed threads I have posted on my 
 The code for each topic can be found in the above repositories, numbered by ID. Details are in the table below.
 
 | ID| Title| Description|Link to Thread|Link to Code| Link to Video
-|:--------------|:--------------|:--------------|:--------------|:--------------|:--------------|
+|:--------------|:--------------|:-----------|:---------------|:---------------|:---------------|
 |0020|Web scraping|An introduction to web scraping HTML websites with rvest|Thread not Live|Code not Live|Video not Live|
 |0019|Writing functions|When and how to write great functions in R|[Go to Thread](https://twitter.com/neilgcurrie/status/1578414872261378049)|[Go to Code](https://github.com/neilcuz/threads/blob/master/0019_writing-functions/writing-functions.md)|
 |0018|Dependency management with renv|Reproducible package version management with renv|[Go to Thread](https://twitter.com/neilgcurrie/status/1576965381532528642)|[Go to code](https://github.com/neilcuz/threads/blob/master/0018_dependency-management-with-renv/dependency-management-with-renv.md)|
