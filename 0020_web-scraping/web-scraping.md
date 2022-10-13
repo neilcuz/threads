@@ -1,0 +1,71 @@
+Web Scraping
+================
+
+This notebook contains the code underpinning the *Web Scraping: An
+Introduction Using the rvest* Package Twitter thread and YouTube video.
+
+Follow me on Twitter [@neilgcurrie](twitter.com/neilgcurrie) to get
+weekly threads on data and coding, and subscribe to my [YouTube
+channel](https://www.youtube.com/channel/UCodzJO1-nCtu5AWO8SGW7uw).
+
+You can find links to all my threads
+[here](https://github.com/neilcuz/threads).
+
+## Setup
+
+Install the packages if you need to.
+
+``` r
+install.packages("rvest")
+install.packages("stringr")
+install.packages("magrittr")
+```
+
+And load them.
+
+``` r
+library(rvest)
+library(stringr)
+library(magrittr)
+```
+
+## Scraping tables
+
+### Method 1 - Grab every table
+
+Here we download the HTML of the webpage and search all the elements on
+that page with the tag table.
+
+``` r
+arrow_webpage_html <- read_html("https://en.wiktionary.org/wiki/βέλος")
+arrow_tables_html <- html_elements(arrow_webpage_html, "table")
+arrow_tables <- html_table(arrow_tables_html)
+arrow_table <- arrow_tables[[3]]
+```
+
+### Method 2 - Use selector gadget
+
+This is an extension you can add to Chrome. It allows you to select the
+part of the page you want and it will generate the code which identifies
+it.
+
+``` r
+arrow_table <- arrow_webpage_html |> 
+  html_elements(".NavFrame:nth-child(36)") |> 
+  html_table() |> 
+  extract2(1)
+```
+
+## Scraping text
+
+Pull out the gender from the text.
+
+``` r
+gender_text_html <- html_elements(arrow_webpage_html, "p:nth-child(33)")
+
+gender <- html_text(gender_text_html) |> 
+  str_split("\\)") |> 
+  unlist() |> 
+  magrittr::extract(2) |> 
+  str_sub(2, 2)
+```
