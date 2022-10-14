@@ -12,7 +12,7 @@ The code for each topic can be found in the above repositories, numbered by ID. 
 
 | ID| Title| Description|Link to Thread|Link to Code| Link to Video
 |:--------------|:--------------|:-----------|:---------------|:---------------|:---------------|
-|0020|Web scraping|An introduction to web scraping HTML websites with rvest|Thread not Live|[Go to Code](https://github.com/neilcuz/threads/blob/master/0020_web-scraping/web-scraping.md)|Video not Live|
+|0020|Web scraping|An introduction to web scraping HTML websites with rvest|[Go to Thread](https://twitter.com/neilgcurrie/status/1580951615351140354)[Go to Code](https://github.com/neilcuz/threads/blob/master/0020_web-scraping/web-scraping.md)|[Go to Video](https://youtu.be/aFpnpTXjOxY)|
 |0019|Writing functions|When and how to write great functions in R|[Go to Thread](https://twitter.com/neilgcurrie/status/1578414872261378049)|[Go to Code](https://github.com/neilcuz/threads/blob/master/0019_writing-functions/writing-functions.md)|
 |0018|Dependency management with renv|Reproducible package version management with renv|[Go to Thread](https://twitter.com/neilgcurrie/status/1576965381532528642)|[Go to Code](https://github.com/neilcuz/threads/blob/master/0018_dependency-management-with-renv/dependency-management-with-renv.md)|
 | 0017|Documenting code in R|How to document your code, including packages with roxygen2|[Go to Thread](https://twitter.com/neilgcurrie/status/1574791025310121985)|[Go to code](https://github.com/neilcuz/threads/blob/master/0017_documenting-code-in-r/documenting-code-in-r.md)|
