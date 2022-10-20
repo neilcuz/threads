@@ -12,7 +12,7 @@ The code for each topic can be found in the above repositories, numbered by ID. 
 
 | ID| Title| Description|Link to Thread|Link to Code| Link to Video
 |:--------------|:--------------|:-----------|:---------------|:---------------|:---------------|
-|0021|GitHub and R|An introduction to using GitHub with R|[Go to Code](https://twitter.com/neilgcurrie/status/1583125950350315520)|No code thread only||
+|0021|GitHub and R|An introduction to using GitHub with R|[Go to Thread](https://twitter.com/neilgcurrie/status/1583125950350315520)|No code thread only||
 |0020|Web scraping|An introduction to web scraping HTML websites with rvest|[Go to Thread](https://twitter.com/neilgcurrie/status/1580951615351140354)|[Go to Code](https://github.com/neilcuz/threads/blob/master/0020_web-scraping/web-scraping.md)|[Go to Video](https://youtu.be/aFpnpTXjOxY)|
 |0019|Writing functions|When and how to write great functions in R|[Go to Thread](https://twitter.com/neilgcurrie/status/1578414872261378049)|[Go to Code](https://github.com/neilcuz/threads/blob/master/0019_writing-functions/writing-functions.md)|
 |0018|Dependency management with renv|Reproducible package version management with renv|[Go to Thread](https://twitter.com/neilgcurrie/status/1576965381532528642)|[Go to Code](https://github.com/neilcuz/threads/blob/master/0018_dependency-management-with-renv/dependency-management-with-renv.md)|
