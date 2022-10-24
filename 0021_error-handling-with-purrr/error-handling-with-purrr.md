@@ -1,0 +1,225 @@
+Error handling with purrr
+================
+
+This notebook contains the code underpinning the *Error handling with
+the purr package* Twitter thread.
+
+Follow me on Twitter [@neilgcurrie](twitter.com/neilgcurrie) to get
+weekly threads on data and coding, and subscribe to my [YouTube
+channel](https://www.youtube.com/channel/UCodzJO1-nCtu5AWO8SGW7uw).
+
+You can find links to all my threads
+[here](https://github.com/neilcuz/threads).
+
+## Setup
+
+First we need to load `purrr`. This piece of code will check if it is
+installed and, if not, it will download it from CRAN. Then it loads it
+with the `library` function.
+
+``` r
+if (!require(purrr)) install.packages("purrr")
+```
+
+    Loading required package: purrr
+
+``` r
+library(purrr)
+```
+
+## purrr::safely
+
+First we will define a simple function to demonstrate using `safely`.
+This takes an input `x` and adds to it a random number between 0 and 1.
+
+``` r
+add_rand <- function (x) x  + runif(1)
+```
+
+We now use the `safely` wrapper function to create a safe version of
+`add_rand`.
+
+``` r
+safe_add_rand <- safely(add_rand)
+```
+
+We will also define an input list to demonstrate on.
+
+We could use a for loop to map over `x_list` and use the `safe_add_rand`
+function on each element.
+
+``` r
+x_list <- list(1, 2, 3, 4, 5)
+
+num_inputs <- length(x_list)
+output <- vector("list", num_inputs) # initialise
+
+for (i in 1:num_inputs) {
+  
+  output[[i]] <- safe_add_rand(x_list[[i]])
+  
+}
+```
+
+A cleaner approach is to use `purrr::map`. It turns this into a one
+liner. If we look at the structure of the output you will see that it
+has returned a list where each element is a list of length 2 with
+elements `result` and `error`. Here all the `error` elements are empty
+because everything worked correctly.
+
+``` r
+output <- map(x_list, safe_add_rand)
+str(output)
+```
+
+    List of 5
+     $ :List of 2
+      ..$ result: num 1.69
+      ..$ error : NULL
+     $ :List of 2
+      ..$ result: num 2.85
+      ..$ error : NULL
+     $ :List of 2
+      ..$ result: num 3.26
+      ..$ error : NULL
+     $ :List of 2
+      ..$ result: num 4.98
+      ..$ error : NULL
+     $ :List of 2
+      ..$ result: num 5.4
+      ..$ error : NULL
+
+#### What if we add in a problem element?
+
+``` r
+x_list[[3]] <- "Vhagar"
+```
+
+If we use the original, unsafe function then this will fail on the third
+pass of the loop - you can’t add a number to a string.
+
+``` r
+output <- map(x_list, add_rand)
+```
+
+But with the safe version this isn’t a problem. The third one fails but
+the function carries on regardless. There are lots of scenarios where
+this behavior is desired.
+
+``` r
+output <- map(x_list, safe_add_rand)
+str(output)
+```
+
+    List of 5
+     $ :List of 2
+      ..$ result: num 1.5
+      ..$ error : NULL
+     $ :List of 2
+      ..$ result: num 2.48
+      ..$ error : NULL
+     $ :List of 2
+      ..$ result: NULL
+      ..$ error :List of 2
+      .. ..$ message: chr "non-numeric argument to binary operator"
+      .. ..$ call   : language x + runif(1)
+      .. ..- attr(*, "class")= chr [1:3] "simpleError" "error" "condition"
+     $ :List of 2
+      ..$ result: num 4.23
+      ..$ error : NULL
+     $ :List of 2
+      ..$ result: num 5.94
+      ..$ error : NULL
+
+You can easily extract the `result` and `error` parts of the output
+list.
+
+``` r
+map(output, "result")
+```
+
+    [[1]]
+    [1] 1.502304
+
+    [[2]]
+    [1] 2.476116
+
+    [[3]]
+    NULL
+
+    [[4]]
+    [1] 4.228497
+
+    [[5]]
+    [1] 5.942091
+
+``` r
+map(output, "error")
+```
+
+    [[1]]
+    NULL
+
+    [[2]]
+    NULL
+
+    [[3]]
+    <simpleError in x + runif(1): non-numeric argument to binary operator>
+
+    [[4]]
+    NULL
+
+    [[5]]
+    NULL
+
+You can also supply the `otherwise` argument when defining the safe
+function. When this fails on the third pass, instead of returning `NULL`
+it returns `NA_real_`.
+
+``` r
+safe_add_rand <- safely(add_rand, otherwise = NA_real_)
+
+output <- map(x_list, safe_add_rand)
+str(output)
+```
+
+    List of 5
+     $ :List of 2
+      ..$ result: num 1.3
+      ..$ error : NULL
+     $ :List of 2
+      ..$ result: num 2.86
+      ..$ error : NULL
+     $ :List of 2
+      ..$ result: num NA
+      ..$ error :List of 2
+      .. ..$ message: chr "non-numeric argument to binary operator"
+      .. ..$ call   : language x + runif(1)
+      .. ..- attr(*, "class")= chr [1:3] "simpleError" "error" "condition"
+     $ :List of 2
+      ..$ result: num 4.48
+      ..$ error : NULL
+     $ :List of 2
+      ..$ result: num 5.05
+      ..$ error : NULL
+
+## purrr::possibly
+
+`possibly` behaves similarly to `safely` but it does not return the
+`error` and `result` components. It returns the output from the function
+and if that doesn’t work it will return the value set through the
+`otherwise` argument. Here I have set the `otherwise` equal to -1.
+
+``` r
+possible_add_rand <- possibly(add_rand, otherwise = -1)
+
+output <- map(x_list, possible_add_rand)
+str(output)
+```
+
+    List of 5
+     $ : num 1.43
+     $ : num 2.41
+     $ : num -1
+     $ : num 4.46
+     $ : num 5.88
