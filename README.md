@@ -2,9 +2,15 @@
 
 ## Overview
 
-Hi, I'm Neil, a freelance data professional and founder of Torch Data [torchdata.io](https://www.torchdata.io).
+Hi, I'm Neil, a freelance data professional and founder of Shoogle, a company helping people up their data skills.
 
-This repository contains code from various R themed threads I have posted on my twitter [\@neilgcurrie](https://twitter.com/neilgcurrie) along with videos which I have recorded for some of the threads.
+This repository contains code from various R themed threads I have posted on my twitter along with videos which I have recorded for some of the threads.
+
+-   For online courses, training and consultancy visit my website [shoogle.co](shoogle.co)
+
+-   Subscribe to my YouTube channel for videos on R and data science @shoogle [youtube.com/\@shoogle](www.youtube.com/@shoogle)
+
+-   Follow me on Twitter for weekly threads on data and coding @neilgcurrie [twitter.com/neilgcurrie](www.twitter.com/neilgcurrie)
 
 ## Topics covered
 
@@ -12,6 +18,7 @@ The code for each topic can be found in the above repositories, numbered by ID. 
 
 | ID   | Title                            | Description                                                                                    | Link to Thread                                                             | Link to Code                                                                                                                         | Link to Video                               |
 |:-----|:---------------------------------|:-----------------------------------------------------------------------------------------------|:---------------------------------------------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------|:--------------------------------------------|
+| 0024 | Mapping                          | How to use the map family of functions from the purrr packages                                 | Not live                                                                   | Not live                                                                                                                             |                                             |
 | 0023 | Stages of a data science project | 5 stage framework of analysis projects                                                         | [Go to thread](https://twitter.com/neilgcurrie/status/1591113647744376832) | No code thread only                                                                                                                  |                                             |
 | 0022 | Error handling with purrr        | How to handle errors in R using safely and possibly from purrr                                 | [Go to thread](https://twitter.com/neilgcurrie/status/1586025012057624577) | [Go to Code](https://github.com/neilcuz/threads/blob/master/0022_error-handling-with-purrr/error-handling-with-purrr.md)             |                                             |
 | 0021 | GitHub and R                     | An introduction to using GitHub with R                                                         | [Go to Thread](https://twitter.com/neilgcurrie/status/1583125950350315520) | No code thread only                                                                                                                  |                                             |
