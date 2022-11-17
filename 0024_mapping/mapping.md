@@ -18,17 +18,13 @@ You can find links to all my threads
 
 ## Setup
 
-First we need to load `purrr`. This piece of code will check if it is
-installed and, if not, it will download it from CRAN. Then it loads it
-with the `library` function.
+First we need to load `purrr`, `tibble` and `here`. This piece of code
+will check if the `pacman` package is installed and, if not, it will
+download it from CRAN. Then it loads the required libraries, downloading
+if need be.
 
 ``` r
 if (!require(pacman)) install.packages("pacman")
-```
-
-    Loading required package: pacman
-
-``` r
 pacman::p_load(purrr, tibble, here)
 ```
 
@@ -56,16 +52,16 @@ print(outputs1)
 ```
 
     [[1]]
-    [1] 0.5275425
+    [1] 0.9176403
 
     [[2]]
-    [1] 0.7857954
+    [1] 0.7317301
 
     [[3]]
-    [1] 0.8743989
+    [1] 0.6684233
 
     [[4]]
-    [1] 0.8065663
+    [1] 0.838242
 
 You could rewrite that with a function
 
@@ -91,16 +87,16 @@ print(outputs2)
 ```
 
     [[1]]
-    [1] 0.5275425
+    [1] 0.9176403
 
     [[2]]
-    [1] 0.7857954
+    [1] 0.7317301
 
     [[3]]
-    [1] 0.8743989
+    [1] 0.6684233
 
     [[4]]
-    [1] 0.8065663
+    [1] 0.838242
 
 ## mapping
 
@@ -113,16 +109,16 @@ print(outputs3)
 ```
 
     [[1]]
-    [1] 0.5275425
+    [1] 0.9176403
 
     [[2]]
-    [1] 0.7857954
+    [1] 0.7317301
 
     [[3]]
-    [1] 0.8743989
+    [1] 0.6684233
 
     [[4]]
-    [1] 0.8065663
+    [1] 0.838242
 
 ## mapping with atomic vector output
 
@@ -135,7 +131,7 @@ outputs_dbl <- map_dbl(inputs, mean_top_5)
 print(outputs_dbl)
 ```
 
-    [1] 0.5275425 0.7857954 0.8743989 0.8065663
+    [1] 0.9176403 0.7317301 0.6684233 0.8382420
 
 A logical output
 
@@ -155,7 +151,7 @@ outputs_lgl <- map_lgl(inputs, big_top_5_mean)
 print(outputs_lgl)
 ```
 
-    [1] FALSE  TRUE  TRUE  TRUE
+    [1]  TRUE FALSE FALSE  TRUE
 
 A character output. You can use \~ to write an anonymous function
 instead of defining the function separately.
@@ -213,10 +209,10 @@ print(output_grade)
     # A tibble: 4 × 3
       subject   grade  mark
       <chr>     <chr> <dbl>
-    1 english   B        72
-    2 maths     C        56
-    3 physics   C        55
-    4 economics C        54
+    1 english   B        70
+    2 maths     A        97
+    3 physics   B        76
+    4 economics B        72
 
 ``` r
 output_grade_col <- map_dfc(inputs, mean_top_5)
@@ -235,7 +231,7 @@ output_grade_col
     # A tibble: 1 × 4
        ...1  ...2  ...3  ...4
       <dbl> <dbl> <dbl> <dbl>
-    1 0.528 0.786 0.874 0.807
+    1 0.918 0.732 0.668 0.838
 
 ## map over 2 arguments
 
@@ -257,19 +253,19 @@ print(output_sse)
 ```
 
     [[1]]
-    [1] 1.191099
+    [1] 0.770295
 
     [[2]]
-    [1] 1.181383
+    [1] 1.098818
 
     [[3]]
-    [1] 2.332086
+    [1] 2.299806
 
 ``` r
 print(output_sse_dbl)
 ```
 
-    [1] 1.191099 1.181383 2.332086
+    [1] 0.770295 1.098818 2.299806
 
 ## map over more than 2 arguments
 

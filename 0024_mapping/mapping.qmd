@@ -16,11 +16,11 @@ You can find links to all my threads [here](https://github.com/neilcuz/threads).
 
 ## Setup
 
-First we need to load `purrr`. This piece of code will check if it is installed and, if not, it will download it from CRAN. Then it loads it with the `library` function.
+First we need to load `purrr`, `tibble` and `here`. This piece of code will check if the `pacman` package is installed and, if not, it will download it from CRAN. Then it loads the required libraries, downloading if need be.
 
 ```{r}
+#| output: false
 if (!require(pacman)) install.packages("pacman")
-
 pacman::p_load(purrr, tibble, here)
 ```
 
