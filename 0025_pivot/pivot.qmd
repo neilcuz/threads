@@ -8,7 +8,7 @@ This notebook contains the code underpinning the *Pivoting with* tidyr Twitter t
 
 -   For online courses, training and consultancy visit my website [shoogle.co](shoogle.co)
 
--   Subscribe to my YouTube channel for videos on R and data science @shoogle [youtube.com/\@shoogle](www.youtube.com/@shoogle)
+-   Subscribe to my YouTube channel for videos on R and data science @shoogle [youtube.com/@shoogle](www.youtube.com/@shoogle)
 
 -   Follow me on Twitter for weekly threads on data and coding @neilgcurrie [twitter.com/neilgcurrie](www.twitter.com/neilgcurrie)
 
