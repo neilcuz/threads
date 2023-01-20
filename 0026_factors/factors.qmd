@@ -1,5 +1,5 @@
 ---
-title: "Pivoting with tidyr"
+title: "Mastering Facotrs in R"
 format: gfm
 editor: visual
 ---

@@ -1,4 +1,4 @@
-Pivoting with tidyr
+Mastering Facotrs in R
 ================
 
 This notebook contains the code underpinning the *Factors* Twitter
