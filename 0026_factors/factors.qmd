@@ -1,0 +1,156 @@
+---
+title: "Pivoting with tidyr"
+format: gfm
+editor: visual
+---
+
+This notebook contains the code underpinning the *Factors* Twitter thread.
+
+-   Want to learn Git and GitHub? Checkout my course [Git and GitHub for Beginners](https://www.shoogle.co/challenge-page/git-and-github-for-beginners)
+
+-   Subscribe to my YouTube channel for videos on R and data science @shoogle [youtube.com/\@shoogle](www.youtube.com/@shoogle)
+
+-   Follow me on Twitter for weekly threads on data and coding @neilgcurrie [twitter.com/neilgcurrie](www.twitter.com/neilgcurrie)
+
+You can find links to all my threads [here](https://github.com/neilcuz/threads).
+
+## Setup
+
+First we need to load `forcasts`, `ggplot2` and `dplyr`. This piece of code will check if the `pacman` package is installed and, if not, it will download it from CRAN. Then it loads the required libraries, downloading if need be.
+
+```{r}
+#| output: false
+
+if (!require(pacman)) install.packages("pacman")
+pacman::p_load(forcats, ggplot2, dplyr)
+```
+
+Usually you will want to create a factor variable from a character variable though it could be others like numeric. 
+
+To create a factor variable we use the `factor` function. Use the levels argument to set the valid categories.
+
+```{r create-factor}
+countries_valid <- c("United Kingdom", 
+                     "United States of America", 
+                     "Greece",
+                     "Japan")
+
+set.seed(100)
+countries_sample <- sample(countries_valid, size = 20, replace = TRUE)
+
+countries_factor <- factor(countries_sample, levels = countries_valid)
+
+print(countries_factor)
+```
+If any of the levels are not present in your character vector it will show as NA.
+
+```{r invalid-levels}
+countries_sample_invalid <- c(countries_sample, "California", "Dagestan", 
+                              "Bavaria")
+
+countries_factor_invalid <- factor(countries_sample_invalid, 
+                                   levels = countries_valid)
+
+print(countries_factor_invalid)
+```
+If you want to change the levels, maybe to shorten some of them like in this example, use the labels argument.
+
+```{r labels}
+countries_valid_short <- c("UK", "USA", "Greece", "Japan")
+
+countries_factors_short <- factor(countries_sample, levels = countries_valid, 
+                                  labels = countries_valid_short)
+print(countries_factors_short)
+```
+
+A variable like countries has no inherent order though but some factors do.
+
+```{r ordered-factors}
+sizes <- c("small", "medium", "large")
+
+sizes_sample <- sample(sizes, size = 10, replace = TRUE)
+
+sizes_factor <- factor(sizes_sample, levels = sizes, ordered = TRUE)
+
+print(sizes_factor)
+```
+
+We can easily do this type of thing in a data.frame/tibble using dplyr.
+
+```{r factors-tibble}
+countries_tbl <- tibble(country = countries_sample) |> 
+  mutate(country_factor = factor(country, levels = countries_valid))
+
+print(countries_tbl)
+```
+
+This let's us control the order of categories on plots easily. If we just use the character variable country the categories will be ordered alphabetically.
+
+```{r plot-unordered}
+countries_tbl |> 
+  ggplot(aes(x = country)) +
+  geom_bar()
+```
+
+If we use the factor the categories will be ordered in the same order we specified the levels in.
+
+```{r plot-ordered}
+countries_tbl |> 
+  ggplot(aes(x = country_factor)) +
+  geom_bar()
+```
+
+We can manually reorder by changing the levels.
+
+```{r plot-manually-reorder}
+
+new_levels <- c("Greece", "United Kingdom", "United States of America", "Japan")
+
+countries_tbl |> 
+  mutate(country_factor = factor(country, levels = new_levels)) |>   
+  ggplot(aes(x = country_factor)) +
+  geom_bar()
+```
+
+The forcats package has some great functions for manipulating factors.
+
+If we want to order our factors by count we can use `fct_infreq`. Plotting by count is often a good idea aesthetically.
+
+```{r plot-large-to-small}
+countries_tbl |> 
+  mutate(country_factor = fct_infreq(country_factor)) |>   
+  ggplot(aes(x = country_factor)) +
+  geom_bar()
+```
+
+Reversing the levels is easy too with `fct_rev`
+
+```{r plot-reverse}
+countries_tbl |> 
+  mutate(country_factor = fct_infreq(country_factor),
+         country_factor = fct_rev(country_factor)) |>   
+  ggplot(aes(x = country_factor)) +
+  geom_bar()
+```
+We can lump factors with low counts together using fct_lump_min
+
+
+```{r plot-lump}
+countries_tbl |> 
+  mutate(country_factor = fct_lump_min(country_factor, min = 5)) |>    
+  ggplot(aes(x = country_factor)) +
+  geom_bar()
+```
+
+We can combine factors manually into a new category.
+
+```{r plot-combine}
+countries_tbl |> 
+  mutate(country_factor = fct_collapse(
+    country_factor,
+    `European Countries` = c("Greece", "United Kingdom")
+    )) |>    
+  ggplot(aes(x = country_factor)) +
+  geom_bar()
+```
+
