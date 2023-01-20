@@ -1,4 +1,4 @@
-Mastering Facotrs in R
+Mastering Factors in R
 ================
 
 This notebook contains the code underpinning the *Factors* Twitter

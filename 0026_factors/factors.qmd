@@ -1,5 +1,5 @@
 ---
-title: "Mastering Facotrs in R"
+title: "Mastering Factors in R"
 format: gfm
 editor: visual
 ---
